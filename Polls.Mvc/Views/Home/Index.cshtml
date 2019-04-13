@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Polls.Infrastructure.Dto.PollDto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h3>Twoje ankiety: </h3>
+<div>
+    <ul>
+        @foreach(var poll in Model)
+        {
+            <li>
+                <a asp-action="Details" asp-controller="Polls" asp-route-id="@poll.Id">
+                    @poll.Title - <small>@poll.Description</small>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

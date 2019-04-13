@@ -1,0 +1,38 @@
+﻿@using Polls.Core.Domain
+@model Polls.Infrastructure.Dto.PollDto
+
+
+<h2>@Model.Title</h2>
+<h4>@Model.Description</h4>
+
+<div>
+    <form asp-action="SubmitSolution" asp-controller="Polls" method="post">
+        <input type="hidden" name="PollId" value="@Model.Id" />
+        @foreach (var question in Model.Questions)
+        {
+            // If it is single choice question
+            if (question is SingleChoiceQuestion scQuestion)
+            {
+                <div>
+                    <label>@scQuestion.QuestionText</label><br />
+                    @foreach (var choice in scQuestion.Choices)
+                    {
+                        <input type="radio" name="@scQuestion.Id" value="@choice" /> @choice <br />
+                    }
+                </div>
+            }
+
+            // If it is text abswer question.
+            if (question is TextAnswerQuestion taQuestion)
+            {
+                <div>
+                    <label>@taQuestion.QuestionText</label> <br />
+                    <input type="text" name="@taQuestion.Id" />
+                </div>
+            }
+        }
+
+        <input type="submit" value="Submit"/>
+    </form>
+</div>
+
