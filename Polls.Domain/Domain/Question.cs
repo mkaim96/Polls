@@ -8,7 +8,7 @@ namespace Polls.Core.Domain
     public abstract class Question
     {
         protected IStatisticsGenerator statsGenerator;
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int PollId { get; set; }
         public QuestionType QuestionType { get; set; }
         public string QuestionText { get; set; }

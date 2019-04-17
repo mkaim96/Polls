@@ -26,13 +26,13 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
             // sql for inserting SingleChoiceQuestion 
             var scQuestionSql = @"INSERT INTO 
-                    dbo.SingleChoiceQuestions (QuestionText, QuestionType, Choices, PollId, Number)
-                    VALUES (@QuestionText, @QuestionType, @Choices, @PollId, @Number)";
+                    dbo.SingleChoiceQuestions (Id, QuestionText, QuestionType, Choices, PollId, Number)
+                    VALUES (@Id, @QuestionText, @QuestionType, @Choices, @PollId, @Number)";
 
             // sql for inserting TextAnswerQuestion
             var taQuestionSql = @"INSERT INTO 
-                    dbo.TextAnswerQuestions (QuestionText, QuestionType, PollId, Number)
-                    VALUES (@QuestionText, @QuestionType, @PollId, @Number)";
+                    dbo.TextAnswerQuestions (Id, QuestionText, QuestionType, PollId, Number)
+                    VALUES (@Id, @QuestionText, @QuestionType, @PollId, @Number)";
 
             #endregion  
 
@@ -73,6 +73,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
         {
             return questions.Select(x => new
             {
+                Id = Guid.NewGuid().ToString(),
                 QuestionText = x.QuestionText,
                 QuestionType = x.QuestionType.ToString(),
                 Choices = string.Join(",", x.Choices),
@@ -86,6 +87,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
         {
             return questions.Select(x => new
             {
+                Id = Guid.NewGuid().ToString(),
                 QuestionText = x.QuestionText,
                 QuestionType = x.QuestionType.ToString(),
                 PollId = pollId,

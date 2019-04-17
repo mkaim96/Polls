@@ -16,7 +16,7 @@ namespace Polls.Infrastructure.Repositories
         {
             _pollsRepository = pollsRepo;
         }
-        public async Task<Dictionary<int, List<Answer>>> GetQuestionsWithAnswers(int pollId)
+        public async Task<Dictionary<string, List<Answer>>> GetQuestionsWithAnswers(int pollId)
         {
             // Returs two result sets, list of TextAnswers and SingleChoiceAnswers.
             var answersSql = @"SELECT ta.Id, ta.QuestionId, ta.Answer
@@ -28,7 +28,7 @@ namespace Polls.Infrastructure.Repositories
                                     WHERE scQ.PollId = @pollId";
 
 
-            var result = new Dictionary<int, List<Answer>>();
+            var result = new Dictionary<string, List<Answer>>();
 
             using (var cnn = Connection.GetConnection())
             {

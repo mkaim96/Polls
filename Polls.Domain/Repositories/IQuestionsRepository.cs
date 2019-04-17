@@ -8,6 +8,6 @@ namespace Polls.Core.Repositories
 {
     public interface IQuestionsRepository
     {
-        Task<Dictionary<int, List<Answer>>> GetQuestionsWithAnswers(int pollId);
+        Task<Dictionary<string, List<Answer>>> GetQuestionsWithAnswers(int pollId);
     }
 }

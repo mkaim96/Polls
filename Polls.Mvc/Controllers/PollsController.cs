@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Polls.Core.Repositories;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Services.Interfaces;
+using Polls.Mvc.Models;
 
 namespace Polls.Mvc.Controllers
 {
