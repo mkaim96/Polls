@@ -42,6 +42,8 @@ namespace Polls.Mvc
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddCors();
+
            SqlMapper.AddTypeHandler(new CsvTypeHandler());
 
             #region Setting up entity framework and Identity
@@ -94,6 +96,10 @@ namespace Polls.Mvc
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseCors(
+                options => options.WithOrigins(@"https://localhost:44392").AllowAnyMethod()
+            );
 
             app.UseMvc(routes =>
             {

@@ -1,0 +1,50 @@
+﻿<link href="~/css/CreatePollStyles.css" rel="stylesheet" />
+
+<div id="app">
+
+    <input type="text" v-model="poll.title" class="title-input">
+    <input type="text" v-model="poll.description" placeholder="Opis formularza" class="description-input">
+
+    <div class="from">
+        <div class="questions">
+            <div v-for="(question, index) in poll.questions" :key="index">
+
+                <!-- template for Single Choice Questions -->
+                <div v-if='question.QuestionType == "SingleChoice"' class="question">
+                    <a v-on:click="deleteQuestion(question)" class="btn delete-question-btn">&times</a>
+                    <div class="question-text">
+                        <label><input v-model="question.QuestionText" class="question-text-input"></label>
+                    </div>
+
+
+
+
+                    <span v-for="(choice, index) in question.Choices" :key="index">
+                        <input type="radio" disabled><input v-model="question.Choices[index]">
+                        <a v-on:click="deleteChoice(question, index)" class="btn">&times</a>
+                        <br />
+                    </span>
+                    <a v-on:click="addChoice(question)" class="add-choice-btn">Add choice</a>
+                </div>
+
+                <!-- template for Text Answer Questions -->
+                <div v-if='question.QuestionType =="TextAnswer"' class="question">
+                    <a v-on:click="deleteQuestion(question)" class="btn delete-question-btn">&times</a>
+                    <label><input v-model="question.QuestionText" class="question-text-input"></label> <br />
+                    <textarea name="" id="" cols="35" rows="5"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button v-on:click="addSingleChoiceQuestion">Dodaj pytanie jednokrotnego wyboru</button>
+        <button v-on:click="addTextAnswerQuestion">Dodaj pytanie z odpowiedzą tekstową</button>
+    </div>
+
+    <button v-on:click="save">Zapisz</button>
+
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="~/js/CeeatePoll.js"></script>

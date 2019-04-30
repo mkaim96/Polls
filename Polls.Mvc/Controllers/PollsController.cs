@@ -23,6 +23,8 @@ namespace Polls.Mvc.Controllers
             _mediator = mediator;
             _pollsService = pollsService;
         }
+
+
         [Route("form/{id}")]
         public async Task<IActionResult> DisplayForm([FromRoute]int id)
         {
@@ -50,8 +52,15 @@ namespace Polls.Mvc.Controllers
         [Route("create")]
         public async Task<IActionResult> CreatePoll([FromBody]CreatePoll request)
         {
+            request.UserId = "f6ee4ba9-335e-4415-b86c-330c2efe9edf";
             await _mediator.Send(request);
             return RedirectToAction("Index", "Home");
+        }
+
+        [Route("create")]
+        public IActionResult CreatePoll()
+        {
+            return View();
         }
 
         [Route("submit-solution")]
