@@ -6,7 +6,11 @@
     <title>@ViewData["Title"] - Polls.Mvc</title>
 </head>
 <body>
-
+    <nav>
+        <ul>
+            @await Html.PartialAsync("_login")
+        </ul>
+    </nav>
     <div class="container">
         @RenderBody()
     </div>
