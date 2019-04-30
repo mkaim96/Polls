@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Services.Interfaces;
@@ -11,6 +12,7 @@ using Polls.Mvc.Models;
 
 namespace Polls.Mvc.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         // For testing
