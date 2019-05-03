@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Polls.Infrastructure.Commands.Polls;
+using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
 using Polls.Mvc.Models;
 
@@ -15,21 +17,19 @@ namespace Polls.Mvc.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        // For testing
-        private string UserId = "f6ee4ba9-335e-4415-b86c-330c2efe9edf";
-
-
         private readonly IMediator _mediator;
         private IPollsService _pollsService;
+        private UserManager<ApplicationUser> _userManager;
 
-        public HomeController(IMediator mediator, IPollsService pollsService)
+        public HomeController(IMediator mediator, IPollsService pollsService, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
             _pollsService = pollsService;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Index()
         {
-            var model = await _pollsService.GetAll(UserId);
+            var model = await _pollsService.GetAll(GetUserId());
             return View(model);
         }
 
@@ -38,5 +38,14 @@ namespace Polls.Mvc.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        #region Helpers
+
+        private string GetUserId()
+        {
+            return _userManager.GetUserId(HttpContext.User);
+        }
+
+        #endregion
     }
 }

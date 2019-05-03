@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Polls.Core.Repositories;
 using Polls.Infrastructure.Commands.Polls;
+using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
 using Polls.Mvc.Models;
 
@@ -16,12 +18,14 @@ namespace Polls.Mvc.Controllers
     public class PollsController : Controller
     {
         private IPollsService _pollsService;
+        private UserManager<ApplicationUser> _userManager;
         private IMediator _mediator;
 
-        public PollsController(IMediator mediator, IPollsService pollsService)
+        public PollsController(IMediator mediator, IPollsService pollsService, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
             _pollsService = pollsService;
+            _userManager = userManager;
         }
 
 
@@ -52,7 +56,8 @@ namespace Polls.Mvc.Controllers
         [Route("create")]
         public async Task<IActionResult> CreatePoll([FromBody]CreatePoll request)
         {
-            request.UserId = "f6ee4ba9-335e-4415-b86c-330c2efe9edf";
+            request.UserId = GetUserId();
+
             await _mediator.Send(request);
             return RedirectToAction("Index", "Home");
         }
@@ -73,6 +78,12 @@ namespace Polls.Mvc.Controllers
 
             // TODO: Return view with thanks to respondent
             return RedirectToAction("Index", "Home");
+        }
+
+
+        private string GetUserId()
+        {
+            return _userManager.GetUserId(HttpContext.User);
         }
     }
 }
