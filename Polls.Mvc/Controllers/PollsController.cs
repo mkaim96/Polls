@@ -68,13 +68,6 @@ namespace Polls.Mvc.Controllers
             return View();
         }
 
-        [Route("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _pollsService.Delete(id);
-            return RedirectToAction("Index", "Home");
-        }
-
         [Route("submit-solution")]
         [HttpPost]
         [ValidateAntiForgeryToken]
