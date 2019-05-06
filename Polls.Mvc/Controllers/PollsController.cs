@@ -80,6 +80,13 @@ namespace Polls.Mvc.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Route("/delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _pollsService.Delete(id);
+            return RedirectToAction("Index", "Home");
+        }
+
 
         private string GetUserId()
         {

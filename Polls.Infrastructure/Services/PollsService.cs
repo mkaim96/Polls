@@ -18,6 +18,11 @@ namespace Polls.Infrastructure.Services
             _pollsRepository = pollsRepo;
         }
 
+        public async Task Delete(int id)
+        {
+            await _pollsRepository.Delete(id);
+        }
+
         public async Task<PollDto> Get(int id)
         {
             var poll = await _pollsRepository.Get(id);

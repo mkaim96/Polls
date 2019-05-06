@@ -13,6 +13,19 @@ namespace Polls.Infrastructure.Repositories
 {
     public class PollsRepository : IPollsRepository
     {
+        public async Task Delete(int id)
+        {
+            var sql = @"delete from dbo.SingleChoiceQuestions Where PollId = @id;
+                        delete from dbo.TextAnswerQuestions Where PollId = @id;
+                        delete from dbo.Polls Where Id = @id";
+
+            using (var cnn = Connection.GetConnection())
+            {
+                await cnn.ExecuteAsync(sql, new { id });
+            }
+
+        }
+
         public async Task<Poll> Get(int id)
         {
             var sql = @"SELECT * FROM dbo.Polls p WHERE p.Id = @id;
