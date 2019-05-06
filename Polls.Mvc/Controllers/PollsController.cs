@@ -59,7 +59,8 @@ namespace Polls.Mvc.Controllers
             request.UserId = GetUserId();
 
             await _mediator.Send(request);
-            return RedirectToAction("Index", "Home");
+
+            return Ok();
         }
 
         [Route("create")]
