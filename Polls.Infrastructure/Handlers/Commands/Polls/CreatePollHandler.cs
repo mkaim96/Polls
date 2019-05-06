@@ -35,11 +35,12 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     VALUES (@Id, @QuestionText, @QuestionType, @PollId, @Number)";
 
             #endregion  
-
+            
             using (var cnn = Connection.GetConnection())
             {
                 cnn.Open();
- 
+
+                var tasks = new List<Task>();
                 using (var tr = cnn.BeginTransaction())
                 {
                     // Insert poll and get Id of inserted row
@@ -50,20 +51,28 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     // insert SingleChoiceQuestions if any
                     if (request.SingleChoiceQuestions != null)
                     {
-                        await cnn.ExecuteAsync(scQuestionSql,
+                        var t1 = cnn.ExecuteAsync(scQuestionSql,
                             MapSingleChoiceQuestions(request.SingleChoiceQuestions, pollId),
                             transaction: tr);
+
+                        tasks.Add(t1);
                     }
 
                     // insert TextAnswerQuestions if any
                     if (request.TextAnswerQuestions != null)
                     {
-                        await cnn.ExecuteAsync(taQuestionSql,
+                        var t2 = cnn.ExecuteAsync(taQuestionSql,
                             MapTextAnswerQuestions(request.TextAnswerQuestions, pollId),
                             transaction: tr);
+
+                        tasks.Add(t2);
+
                     }
+                    
+                    await Task.WhenAll(tasks);
 
                     tr.Commit();
+
                 }
             }
         }
