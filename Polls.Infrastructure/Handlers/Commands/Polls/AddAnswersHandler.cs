@@ -79,8 +79,10 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
                 using (var tr = cnn.BeginTransaction())
                 {
-                    cnn.Execute(scAnswerSql, scQuestionAnswers, transaction: tr);
-                    cnn.Execute(textAnswerSql, taQuestionAnswers, transaction: tr);
+                    var t1 = cnn.ExecuteAsync(scAnswerSql, scQuestionAnswers, transaction: tr);
+                    var t2 = cnn.ExecuteAsync(textAnswerSql, taQuestionAnswers, transaction: tr);
+
+                    await Task.WhenAll(t1, t2);
 
                     tr.Commit();
                 }
