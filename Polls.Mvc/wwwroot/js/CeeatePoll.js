@@ -65,6 +65,12 @@
                 method: 'post',
                 url: 'https://localhost:44392/polls/create',
                 data: request
+            }).then(res => {
+                if (res.status === 200) {
+                    window.location.href = "https://localhost:44392";
+                }
+            }).catch(err => {
+                alert("Failed to save poll to database, try again later.");
             });
         }
 
