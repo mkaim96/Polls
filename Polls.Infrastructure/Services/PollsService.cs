@@ -25,7 +25,7 @@ namespace Polls.Infrastructure.Services
             return new PollDto
             {
                 Id = poll.Id,
-                Questions = poll.Questions,
+                Questions = poll.Questions.OrderBy(x => x.Number),
                 Description = poll.Description,
                 Title = poll.Title
             };
@@ -41,6 +41,11 @@ namespace Polls.Infrastructure.Services
                 Title = x.Title,
                 Description = x.Description
             });
+        }
+
+        public async Task Delete(int pollId)
+        {
+            await _pollsRepository.Delete(pollId);
         }
     }
 }

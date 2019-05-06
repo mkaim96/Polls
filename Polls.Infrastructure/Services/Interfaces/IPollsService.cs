@@ -10,5 +10,6 @@ namespace Polls.Infrastructure.Services.Interfaces
     {
         Task<IEnumerable<PollDto>> GetAll(string userId);
         Task<PollDto> Get(int id);
+        Task Delete(int pollId);
     }
 }

@@ -27,7 +27,6 @@ namespace Polls.Infrastructure.Repositories
               
                 poll.AddQuestions(reader.Read<SingleChoiceQuestion>());
                 poll.AddQuestions(reader.Read<TextAnswerQuestion>());
-                poll.Questions.OrderBy(x => x.Number);
 
                 cnn.Close();
 
@@ -43,6 +42,18 @@ namespace Polls.Infrastructure.Repositories
             {
                 var result = await cnn.QueryAsync<Poll>(sql, new { userId });
                 return result;
+            }
+        }
+
+        public async Task Delete(int id)
+        {
+            var sql = @"delete from dbo.SingleChoiceQuestions where PollId = @id;
+                        delete from dbo.TextAnswerQuestions where PollId = @id;
+                        delete from dbo.Polls where Id = @id";
+
+            using (var cnn = Connection.GetConnection())
+            {
+                await cnn.ExecuteAsync(sql, new { id });
             }
         }
     }
