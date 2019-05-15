@@ -31,21 +31,21 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 using (var tr = cnn.BeginTransaction())
                 {
                     // Delete single choice questions if any to delete.
-                    if (request.ScQuestionsToDelete != null)
+                    if (request.ScQuestionsToDelete.Count > 0)
                     {
                         var Ids = request.ScQuestionsToDelete.Select(x => x.Id).ToList();
                         tasks.Add(cnn.ExecuteAsync(removeScQuestions, new { Ids }, transaction: tr));
                     }
 
                     // Delete text asnwer questions if any.
-                    if (request.TaQuestionsToDelete != null)
+                    if (request.TaQuestionsToDelete.Count > 0)
                     {
                         var Ids = request.TaQuestionsToDelete.Select(x => x.Id).ToList();
                         tasks.Add(cnn.ExecuteAsync(removeTaQuestions, new { Ids }, transaction: tr));
                     }
 
                     // Insert single choice questions.
-                    if (request.NewScQuestions != null)
+                    if (request.NewScQuestions.Count > 0)
                     {
                         // Parametrs for dapper.
                         var parameters = request.NewScQuestions.Select(x => new
@@ -67,7 +67,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     }
 
                     // Insert texta answer questions.
-                    if(request.NewTaQuestions != null)
+                    if(request.NewTaQuestions.Count > 0)
                     {
                         // Parameters for dapper
                         var parameters = request.NewTaQuestions.Select(x => new

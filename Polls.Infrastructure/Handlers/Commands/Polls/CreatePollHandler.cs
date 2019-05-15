@@ -32,7 +32,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                         commandType: CommandType.StoredProcedure);
 
                     // insert SingleChoiceQuestions if any
-                    if (request.SingleChoiceQuestions != null)
+                    if (request.SingleChoiceQuestions.Count > 0)
                     {
                         // Prepare parameters for dapper
                         var parameters = request.SingleChoiceQuestions.Select(x => new
@@ -54,7 +54,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     }
 
                     // insert TextAnswerQuestions if any
-                    if (request.TextAnswerQuestions != null)
+                    if (request.TextAnswerQuestions.Count > 0)
                     {
                         var parameters = request.TextAnswerQuestions.Select(x => new
                         {

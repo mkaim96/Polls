@@ -12,13 +12,13 @@ namespace Polls.Infrastructure.Commands.Polls
         public string NewTitle { get; set; }
         public string NewDescription { get; set; }
 
-        public IEnumerable<SingleChoiceQuestionDto> ScQuestionsToUpdate { get; set; }
-        public IEnumerable<TextAnswerQuestionDto> TaQuestionsToUpdate { get; set; }
+        public List<SingleChoiceQuestionDto> ScQuestionsToUpdate { get; set; }
+        public List<TextAnswerQuestionDto> TaQuestionsToUpdate { get; set; }
 
-        public IEnumerable<SingleChoiceQuestionDto> NewScQuestions { get; set; }
-        public IEnumerable<TextAnswerQuestionDto> NewTaQuestions { get; set; }
+        public List<SingleChoiceQuestionDto> NewScQuestions { get; set; }
+        public List<TextAnswerQuestionDto> NewTaQuestions { get; set; }
 
-        public IEnumerable<SingleChoiceQuestionDto> ScQuestionsToDelete { get; set; }
-        public IEnumerable<TextAnswerQuestionDto> TaQuestionsToDelete { get; set; }
+        public List<SingleChoiceQuestionDto> ScQuestionsToDelete { get; set; }
+        public List<TextAnswerQuestionDto> TaQuestionsToDelete { get; set; }
     }
 }

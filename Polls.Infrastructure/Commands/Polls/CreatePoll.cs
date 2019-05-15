@@ -11,7 +11,7 @@ namespace Polls.Infrastructure.Commands.Polls
         public string UserId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public IEnumerable<SingleChoiceQuestionDto> SingleChoiceQuestions { get; set; }
-        public IEnumerable<TextAnswerQuestionDto> TextAnswerQuestions { get; set; }
+        public List<SingleChoiceQuestionDto> SingleChoiceQuestions { get; set; }
+        public List<TextAnswerQuestionDto> TextAnswerQuestions { get; set; }
     }
 }
