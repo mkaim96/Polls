@@ -5,8 +5,7 @@
             title: 'Formularz bez tytułu',
             description: '',
             questions: [
-                { "QuestionText": "Your favourite opening?", "QuestionType": "SingleChoice", "Choices": ["e4", "d4", "Nf3", "c4"], "Number": 1 },
-                { "QuestionText": "How did you started playing chess?", "QuestionType": "TextAnswer", "Number": 2 }
+                { "QuestionText": "Question text", "QuestionType": "SingleChoice", "Choices": ["choice 1", "choice 2", "choice 3"], "Number": 1 },
             ]
         }
     },
@@ -43,7 +42,7 @@
 
         giveQuestionANumber() {
             var counter = 1;
-            this.poll.questions.map(x => {
+            this.poll.questions.forEach(x => {
                 x.Number = counter;
                 counter += 1;
             });
@@ -73,6 +72,5 @@
                 alert("Failed to save poll to database, try again later.");
             });
         }
-
     }
 });
