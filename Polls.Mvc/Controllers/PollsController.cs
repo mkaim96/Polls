@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Polls.Core.Repositories;
 using Polls.Infrastructure.Commands.Polls;
+using Polls.Infrastructure.CustomModelBinders;
+using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
 using Polls.Mvc.Models;
@@ -81,17 +83,46 @@ namespace Polls.Mvc.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("/delete/{id}")]
+        [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _pollsService.Delete(id);
             return RedirectToAction("Index", "Home");
         }
 
+        [Route("edit")]
+        public IActionResult Edit(int id)
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [Route("edit")]
+        public async Task<IActionResult> Edit([FromBody]EditPoll request)
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("edit/poll/{id}")]
+        public async Task<IActionResult> GetPollToEdit(int id)
+        {
+            var poll =  await _pollsService.Get(id);
+            return Ok(new {
+                pollId = poll.Id,
+                title = poll.Title,
+                description = poll.Description,
+                questions = poll.Questions
+                    .OrderBy(x => x.Number)
+            });
+        }
+
+        #region helpers
         private string GetUserId()
         {
             return _userManager.GetUserId(HttpContext.User);
         }
+        #endregion
     }
 }
