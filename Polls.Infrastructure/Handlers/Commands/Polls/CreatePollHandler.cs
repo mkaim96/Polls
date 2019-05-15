@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Polls.Infrastructure.Dto;
 using System.Linq;
+using System.Data;
 
 namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
@@ -17,25 +18,6 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
     {
         protected override async Task Handle(CreatePoll request, CancellationToken cancellationToken)
         {
-            #region SQL
-
-            // sql for inserting poll and return id of created poll
-            var pollSql = @"INSERT INTO dbo.Polls (Title, Description, UserId) 
-                    OUTPUT INSERTED.Id
-                    VALUES (@Title, @Description, @UserId)";
-
-            // sql for inserting SingleChoiceQuestion 
-            var scQuestionSql = @"INSERT INTO 
-                    dbo.SingleChoiceQuestions (Id, QuestionText, QuestionType, Choices, PollId, Number)
-                    VALUES (@Id, @QuestionText, @QuestionType, @Choices, @PollId, @Number)";
-
-            // sql for inserting TextAnswerQuestion
-            var taQuestionSql = @"INSERT INTO 
-                    dbo.TextAnswerQuestions (Id, QuestionText, QuestionType, PollId, Number)
-                    VALUES (@Id, @QuestionText, @QuestionType, @PollId, @Number)";
-
-            #endregion  
-            
             using (var cnn = Connection.GetConnection())
             {
                 cnn.Open();
@@ -44,16 +26,29 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 using (var tr = cnn.BeginTransaction())
                 {
                     // Insert poll and get Id of inserted row
-                    var pollId = await cnn.QuerySingleAsync<int>(pollSql, 
+                    var pollId = await cnn.QuerySingleAsync<int>("dbo.spPolls_Insert", 
                         new { request.Title, request.Description, request.UserId },
-                        transaction: tr);
+                        transaction: tr,
+                        commandType: CommandType.StoredProcedure);
 
                     // insert SingleChoiceQuestions if any
                     if (request.SingleChoiceQuestions != null)
                     {
-                        var t1 = cnn.ExecuteAsync(scQuestionSql,
-                            MapSingleChoiceQuestions(request.SingleChoiceQuestions, pollId),
-                            transaction: tr);
+                        // Prepare parameters for dapper
+                        var parameters = request.SingleChoiceQuestions.Select(x => new
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            QuestionText = x.QuestionText,
+                            QuestionType = x.QuestionType.ToString(),
+                            Choices = string.Join(",", x.Choices),
+                            PollId = pollId,
+                            Number = x.Number
+                        });
+
+                        var t1 = cnn.ExecuteAsync("dbo.spSingleChoiceQuestions_Insert",
+                            parameters,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(t1);
                     }
@@ -61,9 +56,19 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     // insert TextAnswerQuestions if any
                     if (request.TextAnswerQuestions != null)
                     {
-                        var t2 = cnn.ExecuteAsync(taQuestionSql,
-                            MapTextAnswerQuestions(request.TextAnswerQuestions, pollId),
-                            transaction: tr);
+                        var parameters = request.TextAnswerQuestions.Select(x => new
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            QuestionText = x.QuestionText,
+                            QuestionType = x.QuestionType.ToString(),
+                            PollId = pollId,
+                            Number = x.Number
+                        });
+
+                        var t2 = cnn.ExecuteAsync("dbo.spTextAnswerQuestions_Insert",
+                            parameters,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(t2);
 
@@ -75,33 +80,6 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
                 }
             }
-        }
-
-        // Maps SingleChoiceQuestionsDto to match parameters in sql query.
-        private IEnumerable<object> MapSingleChoiceQuestions(IEnumerable<SingleChoiceQuestionDto> questions, int pollId)
-        {
-            return questions.Select(x => new
-            {
-                Id = Guid.NewGuid().ToString(),
-                QuestionText = x.QuestionText,
-                QuestionType = x.QuestionType.ToString(),
-                Choices = string.Join(",", x.Choices),
-                PollId = pollId,
-                Number = x.Number
-            });
-        }
-
-        // Maps TextAnswerQuestionsDto to match parameters in sql query.
-        private IEnumerable<object> MapTextAnswerQuestions(IEnumerable<TextAnswerQuestionDto> questions, int pollId)
-        {
-            return questions.Select(x => new
-            {
-                Id = Guid.NewGuid().ToString(),
-                QuestionText = x.QuestionText,
-                QuestionType = x.QuestionType.ToString(),
-                PollId = pollId,
-                Number = x.Number
-            });
         }
     }
 }
