@@ -77,7 +77,6 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     await Task.WhenAll(tasks);
 
                     tr.Commit();
-
                 }
             }
         }

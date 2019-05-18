@@ -27,9 +27,9 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
             var stats = new List<QuestionStatistics>();
 
-            foreach(var question in poll.Questions)
+            foreach (var question in poll.Questions)
             {
-                if(answers.ContainsKey(question.Id))
+                if (answers.ContainsKey(question.Id))
                 {
                     var questionStats = question.GenerateStatistics(answers[question.Id]);
                     stats.Add(questionStats);
