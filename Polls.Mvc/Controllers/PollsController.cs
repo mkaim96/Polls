@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Polls.Core.Repositories;
 using Polls.Infrastructure.Commands.Polls;
-using Polls.Infrastructure.CustomModelBinders;
 using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
