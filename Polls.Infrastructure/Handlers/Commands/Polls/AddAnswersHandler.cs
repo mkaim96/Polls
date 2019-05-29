@@ -4,6 +4,7 @@ using Polls.Core.Domain;
 using Polls.Core.Repositories;
 using Polls.Infrastructure;
 using Polls.Infrastructure.Commands.Polls;
+using Polls.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,22 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
     public class AddAnswersHandler : AsyncRequestHandler<AddAnswers>
     {
-        private IPollsRepository _pollsRepository;
-
-        public AddAnswersHandler(IPollsRepository pollsRepo)
-        {
-            _pollsRepository = pollsRepo;
-        }
         protected override async Task Handle(AddAnswers request, CancellationToken cancellationToken)
         {
             var pollId = Convert.ToInt32(request.Form["PollId"]);
 
-            var poll = await _pollsRepository.Get(pollId);
+            Poll poll;
+            using (var cnn = Connection.GetConnection())
+            {
+                cnn.Open();
+                var tr = cnn.BeginTransaction();
+
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+
+                poll = await pollsRepo.Get(pollId);
+                tr.Commit();
+                cnn.Close();
+            }
 
             var scQuestions = poll.GetConcreteQuestions<SingleChoiceQuestion>();
             var taQuestions = poll.GetConcreteQuestions<TextAnswerQuestion>();

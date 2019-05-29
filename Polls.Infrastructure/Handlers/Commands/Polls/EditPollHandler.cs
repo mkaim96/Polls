@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Data;
+using Polls.Core.Repositories;
+using Polls.Infrastructure.Repositories;
+using Polls.Core.Domain;
 
 namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
@@ -28,16 +31,21 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 var tasks = new List<Task>();
                 cnn.Open();
 
-                using (var tr = cnn.BeginTransaction())
+                var tr = cnn.BeginTransaction();
+
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                IQuestionsRepository questionsRepo = new QuestionsRepositoryTr(tr);
+
+                try
                 {
-                    // Delete single choice questions if any to delete.
+                    // Delete single choice questions.
                     if (request.ScQuestionsToDelete.Count > 0)
                     {
                         var Ids = request.ScQuestionsToDelete.Select(x => x.Id).ToList();
                         tasks.Add(cnn.ExecuteAsync(removeScQuestions, new { Ids }, transaction: tr));
                     }
 
-                    // Delete text asnwer questions if any.
+                    // Delete text asnwer questions.
                     if (request.TaQuestionsToDelete.Count > 0)
                     {
                         var Ids = request.TaQuestionsToDelete.Select(x => x.Id).ToList();
@@ -47,94 +55,100 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     // Insert single choice questions.
                     if (request.NewScQuestions.Count > 0)
                     {
-                        // Parametrs for dapper.
-                        var parameters = request.NewScQuestions.Select(x => new
+                        // Prepare questions.
+                        var questions = request.NewScQuestions.Select(x =>
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            QuestionText = x.QuestionText,
-                            QuestionType = x.QuestionType.ToString(),
-                            Choices = string.Join(",", x.Choices),
-                            PollId = request.PollId,
-                            Number = x.Number
+                            return new SingleChoiceQuestion(
+                                request.PollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                                );
                         });
 
-                        var task = cnn.ExecuteAsync("dbo.spSingleChoiceQuestions_Insert",
-                            parameters,
-                            transaction: tr,
-                            commandType: CommandType.StoredProcedure);
+                        var task = questionsRepo.Insert(questions);
 
                         tasks.Add(task);
                     }
 
-                    // Insert texta answer questions.
-                    if(request.NewTaQuestions.Count > 0)
+                    // Insert text answer questions.
+                    if (request.NewTaQuestions.Count > 0)
                     {
-                        // Parameters for dapper
-                        var parameters = request.NewTaQuestions.Select(x => new
+                        // Prepare questions.
+                        var questions = request.NewTaQuestions.Select(x =>
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            QuestionText = x.QuestionText,
-                            QuestionType = x.QuestionType.ToString(),
-                            PollId = request.PollId,
-                            Number = x.Number
+                            return new TextAnswerQuestion(
+                                request.PollId, x.QuestionType, x.QuestionText, x.Number
+                                );
                         });
 
-                        var task = cnn.ExecuteAsync("dbo.spTextAnswerQuestions_Insert",
-                            parameters,
-                            transaction: tr,
-                            commandType: CommandType.StoredProcedure);
+                        var task = questionsRepo.Insert(questions);
 
                         tasks.Add(task);
                     }
 
-                    // Upadte poll
-                    var updatePollParams = new { request.NewTitle, request.NewDescription, request.PollId };
+                    // Update Single Choice Questions.
+                    if(request.ScQuestionsToUpdate.Count > 0)
+                    {
+                        // Prepare params
+                        var singleChoiceQuestionsToUpdate = request.ScQuestionsToUpdate.Select(x => new
+                        {
+                            x.Id,
+                            x.QuestionText,
+                            x.QuestionType,
+                            x.Number,
+                            x.Choices
+                        });
 
-                    var updatePollTask = cnn.ExecuteAsync("dbo.spPolls_Update",
-                        updatePollParams,
-                        transaction: tr,
-                        commandType: CommandType.StoredProcedure);
+                        var updateScQTask = cnn.ExecuteAsync("dbo.spSingleChoiceQuestions_Update",
+                            singleChoiceQuestionsToUpdate,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
+
+                        tasks.Add(updateScQTask);
+                    }
+
+                    // Update Text Answer Questions.
+                    if(request.TaQuestionsToUpdate.Count > 0)
+                    {
+                        // Prepare params
+                        var textAnswerQuestionsToUpdate = request.TaQuestionsToUpdate.Select(x => new
+                        {
+                            x.Id,
+                            x.QuestionText,
+                            x.QuestionType,
+                            x.Number,
+                        });
+
+                        var updateTaQTask = cnn.ExecuteAsync("dbo.spTextAnswerQuestions_Update",
+                            textAnswerQuestionsToUpdate,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
+
+                        tasks.Add(updateTaQTask);
+
+                    }
+
+                    // Upadte poll.
+                    var poll = await cnn.QuerySingleAsync<Poll>(
+                        "select * from dbo.Polls where Id = @PollId",
+                        new { request.PollId },
+                        transaction: tr);
+
+                    poll.SetTitle(request.NewTitle);
+                    poll.SetDescription(request.NewDescription);
+
+                    var updatePollTask = pollsRepo.Update(poll);
 
                     tasks.Add(updatePollTask);
-
-                    //Update Single Choice Questions
-                    var updateScQParams = request.ScQuestionsToUpdate.Select(x => new
-                    {
-                        x.QuestionText,
-                        x.QuestionType,
-                        Choices = string.Join(",", x.Choices),
-                        x.Number,
-                        x.Id
-                    });
-
-                    var updateScQTask = cnn.ExecuteAsync("dbo.spSingleChoiceQuestions_Update",
-                        updateScQParams,
-                        transaction: tr,
-                        commandType: CommandType.StoredProcedure);
-
-                    tasks.Add(updateScQTask);
-
-                    // Update Text Answer Questions
-
-                    // Prepare params
-                    var updateTaQParams = request.TaQuestionsToUpdate.Select(x => new
-                    {
-                        x.QuestionText,
-                        x.QuestionType,
-                        x.Number,
-                        x.Id
-                    });
-
-                    var updateTaQTask = cnn.ExecuteAsync("dbo.spTextAnswerQuestions_Update",
-                        updateTaQParams,
-                        transaction: tr,
-                        commandType: CommandType.StoredProcedure);
-
-                    tasks.Add(updateTaQTask);
 
                     await Task.WhenAll(tasks);
 
                     tr.Commit();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception type: {0}", ex.GetType());
+                    Console.WriteLine(" Message: {0}", ex.Message);
+
+                    tr.Rollback();
                 }
             }
         }

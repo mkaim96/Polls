@@ -71,9 +71,6 @@ namespace Polls.Mvc
 
             services.AddMediatR(typeof(ApplicationDbContext).GetTypeInfo().Assembly);
 
-            services.AddScoped<IPollsRepository, PollsRepository>();
-            services.AddScoped<IQuestionsRepository, QuestionsRepository>();
-
             services.AddScoped<IPollsService, PollsService>();
 
 

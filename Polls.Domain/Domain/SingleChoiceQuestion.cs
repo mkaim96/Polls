@@ -13,6 +13,13 @@ namespace Polls.Core.Domain
         {
             statsGenerator = new SingleChoiceQuestionStatisticsGenerator();
         }
+
+        public SingleChoiceQuestion(int pollId, QuestionType qType, string qText, int number, IEnumerable<string> choices) 
+            : base(pollId, qType, qText, number)
+        {
+            Choices = choices;
+            statsGenerator = new SingleChoiceQuestionStatisticsGenerator();
+        }
         
 
 

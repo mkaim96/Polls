@@ -10,6 +10,9 @@ namespace Polls.Core.Repositories
     {
         Task<Poll> Get(int id);
         Task<IEnumerable<Poll>> GetAll(string userId);
-        Task Delete(int id);
+        Task<int> Delete(int id);
+        Task<int> InsertPollOutId(Poll poll);
+        Task<int> Update(Poll poll);
+        Task<IEnumerable<Answer>> GetAnswers(int pollId);
     }
 }

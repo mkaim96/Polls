@@ -1,5 +1,7 @@
-﻿using Polls.Core.Repositories;
+﻿using Polls.Core.Domain;
+using Polls.Core.Repositories;
 using Polls.Infrastructure.Dto;
+using Polls.Infrastructure.Repositories;
 using Polls.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,41 +13,68 @@ namespace Polls.Infrastructure.Services
 {
     public class PollsService : IPollsService
     {
-        private IPollsRepository _pollsRepository;
-
-        public PollsService(IPollsRepository pollsRepo)
-        {
-            _pollsRepository = pollsRepo;
-        }
-
         public async Task Delete(int id)
         {
-            await _pollsRepository.Delete(id);
+            using (var cnn = Connection.GetConnection())
+            {
+                cnn.Open();
+                var tr = cnn.BeginTransaction();
+
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+
+                await pollsRepo.Delete(id);
+
+                tr.Commit();
+            }
         }
 
         public async Task<PollDto> Get(int id)
         {
-            var poll = await _pollsRepository.Get(id);
-
-            return new PollDto
+            using (var cnn = Connection.GetConnection())
             {
-                Id = poll.Id,
-                Questions = poll.Questions,
-                Description = poll.Description,
-                Title = poll.Title
-            };
+                cnn.Open();
+                var tr = cnn.BeginTransaction();
+
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+
+                var poll = await pollsRepo.Get(id);
+
+                tr.Commit();
+
+                cnn.Close();
+
+                return new PollDto
+                {
+                    Id = poll.Id,
+                    Questions = poll.Questions.OrderBy(x => x.Number),
+                    Description = poll.Description,
+                    Title = poll.Title
+                };
+            }
         }
 
         public async Task<IEnumerable<PollDto>> GetAll(string userId)
         {
-            var polls = await _pollsRepository.GetAll(userId);
-
-            return polls.Select(x => new PollDto
+            using (var cnn = Connection.GetConnection())
             {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description
-            });
+                cnn.Open();
+
+                var tr = cnn.BeginTransaction();
+
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+
+                var polls = await pollsRepo.GetAll(userId);
+
+                tr.Commit();
+                cnn.Close();
+
+                return polls.Select(x => new PollDto
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description
+                });
+            }
         }
     }
 }

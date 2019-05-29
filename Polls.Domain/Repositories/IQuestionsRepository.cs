@@ -8,6 +8,10 @@ namespace Polls.Core.Repositories
 {
     public interface IQuestionsRepository
     {
-        Task<Dictionary<string, List<Answer>>> GetQuestionsWithAnswers(int pollId);
+        Task<int> Insert(IEnumerable<SingleChoiceQuestion> questions);
+        Task<int> Insert(IEnumerable<TextAnswerQuestion> questions);
+        Task<int> Update(IEnumerable<SingleChoiceQuestion> questions);
+        Task<int> Update(IEnumerable<TextAnswerQuestion> questions);
+
     }
 }

@@ -11,6 +11,7 @@ using Dapper;
 using Polls.Infrastructure.Dto;
 using System.Linq;
 using System.Data;
+using Polls.Infrastructure.Repositories;
 
 namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
@@ -20,63 +21,64 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
         {
             using (var cnn = Connection.GetConnection())
             {
+                var tasks = new List<Task>();
+
                 cnn.Open();
 
-                var tasks = new List<Task>();
-                using (var tr = cnn.BeginTransaction())
+                var tr = cnn.BeginTransaction();
+
+                // Pass transaction to repository/repositories
+                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                IQuestionsRepository questionsRepo = new QuestionsRepositoryTr(tr);
+
+                try
                 {
+                    var poll = new Poll(request.UserId, request.Title, request.Description);
                     // Insert poll and get Id of inserted row
-                    var pollId = await cnn.QuerySingleAsync<int>("dbo.spPolls_Insert", 
-                        new { request.Title, request.Description, request.UserId },
-                        transaction: tr,
-                        commandType: CommandType.StoredProcedure);
+                    var pollId = await pollsRepo.InsertPollOutId(poll);
 
                     // insert SingleChoiceQuestions if any
                     if (request.SingleChoiceQuestions.Count > 0)
                     {
-                        // Prepare parameters for dapper
-                        var parameters = request.SingleChoiceQuestions.Select(x => new
+                        // Prepare questions
+                        var questions = request.SingleChoiceQuestions.Select(x =>
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            QuestionText = x.QuestionText,
-                            QuestionType = x.QuestionType.ToString(),
-                            Choices = string.Join(",", x.Choices),
-                            PollId = pollId,
-                            Number = x.Number
-                        });
+                            return new SingleChoiceQuestion(
+                                pollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                                );
+                        }).ToList();
 
-                        var t1 = cnn.ExecuteAsync("dbo.spSingleChoiceQuestions_Insert",
-                            parameters,
-                            transaction: tr,
-                            commandType: CommandType.StoredProcedure);
+                        var task = questionsRepo.Insert(questions);
 
-                        tasks.Add(t1);
+                        tasks.Add(task);
                     }
 
                     // insert TextAnswerQuestions if any
                     if (request.TextAnswerQuestions.Count > 0)
                     {
-                        var parameters = request.TextAnswerQuestions.Select(x => new
+                        var questions = request.TextAnswerQuestions.Select(x =>
                         {
-                            Id = Guid.NewGuid().ToString(),
-                            QuestionText = x.QuestionText,
-                            QuestionType = x.QuestionType.ToString(),
-                            PollId = pollId,
-                            Number = x.Number
-                        });
+                            return new TextAnswerQuestion(
+                                pollId, x.QuestionType, x.QuestionText, x.Number
+                                );
+                        }).ToList();
 
-                        var t2 = cnn.ExecuteAsync("dbo.spTextAnswerQuestions_Insert",
-                            parameters,
-                            transaction: tr,
-                            commandType: CommandType.StoredProcedure);
+                        var task = questionsRepo.Insert(questions);
 
-                        tasks.Add(t2);
+                        tasks.Add(task);
 
                     }
-                    
+
                     await Task.WhenAll(tasks);
 
                     tr.Commit();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception type: {0}", ex.GetType());
+                    Console.WriteLine(" Message: {0}", ex.Message);
+
+                    tr.Rollback();
                 }
             }
         }

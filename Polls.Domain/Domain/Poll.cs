@@ -43,5 +43,15 @@ namespace Polls.Core.Domain
 
             return result;
         }
+
+        public void SetTitle(string title)
+        {
+            Title = title;
+        }
+
+        public void SetDescription(string desc)
+        {
+            Description = desc;
+        }
     }
 }
