@@ -12,6 +12,7 @@ using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
 using Polls.Mvc.Models;
+using Polls.Mvc.Models.Polls;
 
 namespace Polls.Mvc.Controllers
 {
@@ -40,7 +41,12 @@ namespace Polls.Mvc.Controllers
         [Route("details/{id}")]
         public async Task<IActionResult> Details([FromRoute]int id)
         {
-            var model = await _pollsService.Get(id);
+            var poll = await _pollsService.Get(id);
+            var model = new DetailsViewModel
+            {
+                Poll = poll,
+                QuestionCount = poll.Questions.Count()
+            };
             return View(model);
         }
 

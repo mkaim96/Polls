@@ -19,11 +19,11 @@
 
 
 
-                    <span v-for="(choice, index) in question.Choices" :key="index">
+                    <div class="choice" v-for="(choice, index) in question.Choices" :key="index">
                         <input type="radio" disabled><input v-model="question.Choices[index]">
                         <a v-on:click="deleteChoice(question, index)" class="btn">&times</a>
                         <br />
-                    </span>
+                    </div>
                     <a v-on:click="addChoice(question)" class="add-choice-btn">Add choice</a>
                 </div>
 
