@@ -6,6 +6,7 @@ using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,7 +69,8 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 }
             }
 
-            return stats;
+            
+            return stats.OrderBy(x => x.Question.Number);
         }
     }
 }

@@ -5,11 +5,11 @@ using Polls.Core.Domain;
 
 namespace Polls.Core.Statistics.StatsGenerators
 {
-    public class SingleChoiceQuestionStatisticsGenerator : IStatisticsGenerator
+    class MultipleChoiceQuestionStatisticsGenerator : IStatisticsGenerator
     {
         public QuestionStatistics Generate(Question q, List<Answer> answers)
         {
-            var question = (SingleChoiceQuestion)q;
+            var question = (MultipleChoiceQuestion)q;
 
             var choicesCount = new Dictionary<string, int>();
 
@@ -19,20 +19,23 @@ namespace Polls.Core.Statistics.StatsGenerators
                 choicesCount.Add(choice, 0);
             }
 
-            // Go through every answer and increase count.
-            foreach(SingleChoiceAnswer answer in answers)
+            foreach(MultipleChoiceAnswer answer in answers)
             {
-                if(choicesCount.ContainsKey(answer.Choice))
+                foreach(var choice in answer.Choices)
                 {
-                    choicesCount[answer.Choice] += 1;
+                    if(choicesCount.ContainsKey(choice))
+                    {
+                        choicesCount[choice] += 1;
+                    }
                 }
             }
 
-            var stats = new SinlgeChoiceQuestionStatistics
+            var stats = new MultipleChoiceQuestionStatistics
             {
                 Question = question,
                 VotesCount = answers.Count,
                 ChoicesCount = choicesCount
+
             };
 
             return stats;

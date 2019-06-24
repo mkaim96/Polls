@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -110,17 +111,18 @@ namespace Polls.Mvc.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("edit/poll/{id}")]
         public async Task<IActionResult> GetPollToEdit(int id)
         {
             var poll =  await _pollsService.Get(id);
+
             return Ok(new {
                 pollId = poll.Id,
                 title = poll.Title,
                 description = poll.Description,
-                questions = poll.Questions
-                    .OrderBy(x => x.Number)
-            });
+                questions = poll.Questions.OrderBy(x => x.Number)
+            });;
         }
 
         #region helpers

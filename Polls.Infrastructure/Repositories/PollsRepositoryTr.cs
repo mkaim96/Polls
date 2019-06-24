@@ -23,6 +23,7 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = @"delete from dbo.SingleChoiceQuestions Where PollId = @id;
                         delete from dbo.TextAnswerQuestions Where PollId = @id;
+                        delete from dbo.MultipleChoiceQuestions Where PollId = @id;
                         delete from dbo.Polls Where Id = @id";
 
             return await cnn.ExecuteAsync(sql, new { id }, transaction: tr);
@@ -32,14 +33,17 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = @"SELECT * FROM dbo.Polls p WHERE p.Id = @id;
                         SELECT * FROM dbo.SingleChoiceQuestions scq WHERE scq.PollId = @id;
-                        SELECT * FROM dbo.TextAnswerQuestions taq WHERE taq.PollId = @id";
+                        SELECT * FROM dbo.TextAnswerQuestions taq WHERE taq.PollId = @id;
+                        SELECT * FROM dbo.MultipleChoiceQuestions mcq WHERE mcq.PollId = @id";
 
             var reader = await cnn.QueryMultipleAsync(sql, new { id }, transaction: tr);
             var poll = reader.ReadSingle<Poll>();
 
 
+
             poll.AddQuestions(reader.Read<SingleChoiceQuestion>());
             poll.AddQuestions(reader.Read<TextAnswerQuestion>());
+            poll.AddQuestions(reader.Read<MultipleChoiceQuestion>());
             poll.Questions.OrderBy(x => x.Number);
 
             return poll;
@@ -84,7 +88,10 @@ namespace Polls.Infrastructure.Repositories
                                     WHERE taQ.PollId = @pollId;
                                SELECT scA.Id, scA.QuestionId, scA.Choice FROM SingleChoiceAnswers scA
                                     JOIN SingleChoiceQuestions scQ on scQ.Id = scA.QuestionId
-                                    WHERE scQ.PollId = @pollId";
+                                    WHERE scQ.PollId = @pollId;
+                               SELECT mcA.Id, mcA.QuestionId, mcA.Choices FROM MultipleChoiceAnswers mcA
+                                    JOIN MultipleChoiceQuestions mcQ on mcQ.Id = mcA.QuestionId
+                                    WHERE mcQ.PollId = @pollId";
 
 
             var answersReader = await cnn.QueryMultipleAsync(sql, new { pollId }, transaction: tr);
@@ -93,6 +100,7 @@ namespace Polls.Infrastructure.Repositories
 
             answers.AddRange(answersReader.Read<TextAnswer>());
             answers.AddRange(answersReader.Read<SingleChoiceAnswer>());
+            answers.AddRange(answersReader.Read<MultipleChoiceAnswer>());
 
             return answers;
         }

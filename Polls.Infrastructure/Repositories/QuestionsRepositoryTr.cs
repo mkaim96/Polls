@@ -50,5 +50,19 @@ namespace Polls.Infrastructure.Repositories
                 transaction: tr,
                 commandType: CommandType.StoredProcedure);
         }
+
+        public async Task<int> Insert(IEnumerable<MultipleChoiceQuestion> questions)
+        {
+            return await cnn.ExecuteAsync("dbo.spMultipleChoiceQuestions_Insert",
+                questions,
+                transaction: tr,
+                commandType: CommandType.StoredProcedure
+                );
+        }
+
+        public Task<int> Update(IEnumerable<MultipleChoiceQuestion> questions)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

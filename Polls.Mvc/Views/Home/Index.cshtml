@@ -10,7 +10,7 @@
         @foreach(var poll in Model)
         {
             <li>
-                <a asp-action="Details" asp-controller="Polls" asp-route-id="@poll.Id">
+                <a asp-action="Details" asp-controller="Polls" asp-route-id="@poll.Id" class="link">
                     @poll.Title
                 </a>
             </li>

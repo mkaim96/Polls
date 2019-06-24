@@ -23,6 +23,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
             var removeScQuestions = @"delete from dbo.SingleChoiceQuestions where Id in @Ids";
             var removeTaQuestions = @"delete from dbo.TextAnswerQuestions where Id in @Ids";
+            var removeMcQuestions = @"delete from dbo.MultipleChoiceQuestions where Id in @Ids";
 
             #endregion
 
@@ -52,6 +53,13 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                         tasks.Add(cnn.ExecuteAsync(removeTaQuestions, new { Ids }, transaction: tr));
                     }
 
+                    // Delete multiple choice questions.
+                    if(request.McQuestionsToDelete.Count > 0)
+                    {
+                        var Ids = request.TaQuestionsToDelete.Select(x => x.Id).ToList();
+                        tasks.Add(cnn.ExecuteAsync(removeMcQuestions, new { Ids }, transaction: tr));
+                    }
+
                     // Insert single choice questions.
                     if (request.NewScQuestions.Count > 0)
                     {
@@ -77,6 +85,20 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                             return new TextAnswerQuestion(
                                 request.PollId, x.QuestionType, x.QuestionText, x.Number
                                 );
+                        });
+
+                        var task = questionsRepo.Insert(questions);
+
+                        tasks.Add(task);
+                    }
+
+                    // Insert multiple choice questions
+                    if(request.NewMcQuestions.Count > 0)
+                    {
+                        // Prepare questions.
+                        var questions = request.NewMcQuestions.Select(x =>
+                        {
+                            return new MultipleChoiceQuestion(request.PollId, x.QuestionType, x.QuestionText, x.Number, x.Choices);
                         });
 
                         var task = questionsRepo.Insert(questions);
@@ -125,6 +147,25 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                         tasks.Add(updateTaQTask);
 
                     }
+
+                    // Update multiple choice questions.
+                    if(request.McQuestionsToUpdate.Count > 0)
+                    {
+                        // Prepare params 
+                        var multipleChoiceQuestionsToUpdate = request.McQuestionsToUpdate.Select(x => new
+                        {
+                            x.Id,
+                            x.QuestionText,
+                            x.QuestionType,
+                            x.Number,
+                            x.Choices
+                        });
+
+                        var task = cnn.ExecuteAsync("dbo.spMultipleChoiceQuestions_Update", multipleChoiceQuestionsToUpdate, transaction: tr);
+
+                        tasks.Add(task);
+                    }
+
 
                     // Upadte poll.
                     var poll = await cnn.QuerySingleAsync<Poll>(

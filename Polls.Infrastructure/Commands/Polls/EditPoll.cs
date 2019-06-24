@@ -14,11 +14,14 @@ namespace Polls.Infrastructure.Commands.Polls
 
         public List<SingleChoiceQuestionDto> ScQuestionsToUpdate { get; set; }
         public List<TextAnswerQuestionDto> TaQuestionsToUpdate { get; set; }
+        public List<MultipleChoiceQuestionDto> McQuestionsToUpdate { get; set; }
 
         public List<SingleChoiceQuestionDto> NewScQuestions { get; set; }
         public List<TextAnswerQuestionDto> NewTaQuestions { get; set; }
+        public List<MultipleChoiceQuestionDto> NewMcQuestions { get; set; }
 
         public List<SingleChoiceQuestionDto> ScQuestionsToDelete { get; set; }
         public List<TextAnswerQuestionDto> TaQuestionsToDelete { get; set; }
+        public List<MultipleChoiceQuestionDto> McQuestionsToDelete { get; set; }
     }
 }

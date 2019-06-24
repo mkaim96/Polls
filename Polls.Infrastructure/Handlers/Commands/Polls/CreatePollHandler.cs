@@ -53,6 +53,21 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                         tasks.Add(task);
                     }
 
+                    // insert MultipleCHoiceQuestions if any
+                    if(request.MultipleChoiceQuestions.Count > 0)
+                    {
+                        var questions = request.MultipleChoiceQuestions.Select(x =>
+                        {
+                            return new MultipleChoiceQuestion(
+                                pollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                                );
+                        }).ToList();
+
+                        var task = questionsRepo.Insert(questions);
+
+                        tasks.Add(task);
+                    }
+
                     // insert TextAnswerQuestions if any
                     if (request.TextAnswerQuestions.Count > 0)
                     {

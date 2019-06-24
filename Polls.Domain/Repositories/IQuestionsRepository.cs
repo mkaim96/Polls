@@ -10,8 +10,11 @@ namespace Polls.Core.Repositories
     {
         Task<int> Insert(IEnumerable<SingleChoiceQuestion> questions);
         Task<int> Insert(IEnumerable<TextAnswerQuestion> questions);
+        Task<int> Insert(IEnumerable<MultipleChoiceQuestion> questions);
+
         Task<int> Update(IEnumerable<SingleChoiceQuestion> questions);
         Task<int> Update(IEnumerable<TextAnswerQuestion> questions);
+        Task<int> Update(IEnumerable<MultipleChoiceQuestion> questions);
 
     }
 }

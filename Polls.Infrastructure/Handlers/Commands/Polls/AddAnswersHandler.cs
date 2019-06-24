@@ -35,10 +35,13 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
             var scQuestions = poll.GetConcreteQuestions<SingleChoiceQuestion>();
             var taQuestions = poll.GetConcreteQuestions<TextAnswerQuestion>();
+            var mcQuestions = poll.GetConcreteQuestions<MultipleChoiceQuestion>();
+
 
             // Initialize lists of answers.
             var scQuestionAnswers = new List<SingleChoiceAnswer>();
             var taQuestionAnswers = new List<TextAnswer>();
+            var mcQuestionAnswers = new List<MultipleChoiceAnswer>();
 
             // Loop through every single choice question and and check if form contains answer for it
             // if yes, create answer and add to list.
@@ -50,6 +53,18 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     {
                         QuestionId = question.Id,
                         Choice = request.Form[question.Id.ToString()],
+                    });
+                }
+            }
+            
+            foreach (var question in mcQuestions)
+            {
+                if(request.Form.ContainsKey(question.Id.ToString()))
+                {
+                    mcQuestionAnswers.Add(new MultipleChoiceAnswer
+                    {
+                        QuestionId = question.Id,
+                        Choices = request.Form[question.Id.ToString()]
                     });
                 }
             }
@@ -78,6 +93,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
             // Insert answers to database.
             var scAnswerSql = @"INSERT INTO dbo.SingleChoiceAnswers (QuestionId, Choice) VALUES (@QuestionId, @Choice)";
             var textAnswerSql = @"INSERT INTO dbo.TextAnswers (QuestionId, Answer) VALUES (@QuestionId, @Answer)";
+            var mcAnswerSql = @"INSERT INTO dbo.MultipleChoiceAnswers (QuestionId, Choices) VALUES (@QuestionId, @Choices)";
 
             using (var cnn = Connection.GetConnection())
             {
@@ -88,12 +104,12 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     var t1 = cnn.ExecuteAsync(scAnswerSql, scQuestionAnswers, transaction: tr);
                     var t2 = cnn.ExecuteAsync(textAnswerSql, taQuestionAnswers, transaction: tr);
 
-                    await Task.WhenAll(t1, t2);
+                    var t3 = cnn.ExecuteAsync(mcAnswerSql, mcQuestionAnswers, transaction: tr);
+
+                    await Task.WhenAll(t1, t2, t3);
 
                     tr.Commit();
                 }
-
-                cnn.Close();
             }
 
 

@@ -35,6 +35,27 @@
                     </div>
                 }
 
+                // if it is multiple choice question
+                if(question is MultipleChoiceQuestion mcQuestion)
+                {
+                    <div class="question-box">
+                        <div class="question-text">
+                            <label>@mcQuestion.QuestionText</label>
+                        </div>
+
+                        <div class="choices">
+                            @foreach(var choice in mcQuestion.Choices)
+                            {
+                                <div class="choice">
+                                    <input class="choice-input" type="checkbox" name="@mcQuestion.Id" value="@choice"/>
+                                    <label class="choice-text">@choice</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+
                 // If it is text abswer question.
                 if (question is TextAnswerQuestion taQuestion)
                 {

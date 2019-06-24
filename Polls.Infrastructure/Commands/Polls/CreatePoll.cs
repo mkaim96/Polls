@@ -13,5 +13,6 @@ namespace Polls.Infrastructure.Commands.Polls
         public string Description { get; set; }
         public List<SingleChoiceQuestionDto> SingleChoiceQuestions { get; set; }
         public List<TextAnswerQuestionDto> TextAnswerQuestions { get; set; }
+        public List<MultipleChoiceQuestionDto> MultipleChoiceQuestions { get; set; }
     }
 }

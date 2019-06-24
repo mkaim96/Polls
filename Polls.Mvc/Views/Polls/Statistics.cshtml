@@ -4,15 +4,15 @@
     ViewData["Title"] = "Statistics";
 }
 
-<h2>Statistics</h2>
+<h2>Statystyki</h2>
 
-@foreach(var stat in Model)
+@foreach (var stat in Model)
 {
-    if(stat is SinlgeChoiceQuestionStatistics scqStat)
+    if (stat is SinlgeChoiceQuestionStatistics scqStat)
     {
         <p>@scqStat.Question.Number. @scqStat.Question.QuestionText (@scqStat.VotesCount odpowiedzi.)</p>
         <ul>
-            @foreach(var choice in scqStat.ChoicesCount)
+            @foreach (var choice in scqStat.ChoicesCount)
             {
                 decimal percentage = Decimal.Divide(choice.Value, scqStat.VotesCount) * 100;
                 <li>@choice.Key - @choice.Value (@percentage.ToString("0.0") %)</li>
@@ -20,11 +20,24 @@
         </ul>
     }
 
-    if(stat is TextAnswerQuestionStatistics taqStat)
+    if (stat is MultipleChoiceQuestionStatistics mcqStat)
+    {
+        <p>@mcqStat.Question.Number.  @mcqStat.Question.QuestionText (@mcqStat.VotesCount odpowiedzi.)</p>
+
+        <ul>
+            @foreach (var choice in mcqStat.ChoicesCount)
+            {
+                decimal percentage = Decimal.Divide(choice.Value, mcqStat.VotesCount) * 100;
+                <li>@choice.Key - @choice.Value (@percentage.ToString("0.0") %)</li>
+            }
+        </ul>
+    }
+
+    if (stat is TextAnswerQuestionStatistics taqStat)
     {
         <p>@taqStat.Question.Number.@taqStat.Question.QuestionText (@taqStat.AnswersCount odpowiedzi.)</p>
         <table style="margin-left: 20px">
-            @foreach(var answer in taqStat.Answers)
+            @foreach (var answer in taqStat.Answers)
             {
                 <tr>
                     <td>@answer</td>
