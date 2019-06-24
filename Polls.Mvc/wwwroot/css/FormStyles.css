@@ -1,13 +1,4 @@
-﻿.form {
-    background: white;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 10px 30px;
-    -webkit-box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
-    -moz-box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
-    box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
-}
-
+﻿
 .question-box {
     margin-bottom: 10px;
 }

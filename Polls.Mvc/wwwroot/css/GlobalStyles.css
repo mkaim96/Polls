@@ -11,6 +11,7 @@
     -webkit-box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
     -moz-box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
     box-shadow: -1px -1px 34px -8px rgba(0,0,0,0.75);
+    margin-bottom: 50px;
 }
 
 nav {
@@ -25,7 +26,8 @@ nav {
     align-items: center;
     -webkit-box-shadow: -3px -5px 43px -12px rgba(0,0,0,0.75);
     -moz-box-shadow: -3px -5px 43px -12px rgba(0,0,0,0.75);
-    box-shadow: -3px -5px 43px -12px rgba(0,0,0,0.75)
+    box-shadow: -3px -5px 43px -12px rgba(0,0,0,0.75);
+    z-index: 1;
 }
 
 nav ul {
@@ -51,12 +53,12 @@ nav ul {
     padding-left: 10px;
 }
 
-a {
+.link {
     text-decoration: none;
     color: royalblue;
 }
 
-a:hover {
+.link:hover {
     color: dodgerblue;
 }
 
