@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="~/css/GlobalStylescss.css" rel="stylesheet" />
+    <link href="~/css/GlobalStyles.css" rel="stylesheet" />
     <link href="~/css/FormStyles.css" rel="stylesheet" />
     <title>@ViewData["Title"] - Polls.Mvc</title>
 </head>
@@ -13,8 +13,8 @@
 
         <div class="left-side">
             <ul>
-                <li><a class="text-highlight" asp-action="Index" asp-controller="Home">Strona głowna</a></li>
-                <li><a asp-action="CreatePoll" asp-controller="Polls">Nowy formularz</a></li>
+                <li><a class="text-highlight link" asp-action="Index" asp-controller="Home">Strona głowna</a></li>
+                <li><a asp-action="CreatePoll" asp-controller="Polls" class="link">Nowy formularz</a></li>
             </ul>
         </div>
 
