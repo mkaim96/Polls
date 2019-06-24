@@ -6,11 +6,11 @@
 
 @if (signInManager.IsSignedIn(User))
 {
-    <li><a asp-action="Logout" asp-controller="Account">Wyloguj</a></li>
+    <li><a asp-action="Logout" asp-controller="Account" class="link">Wyloguj</a></li>
 }
 else
 {
-    <li><a asp-action="Login" asp-controller="Account">Zaloguj się</a></li>
-    <li><a asp-action="Register" asp-controller="Account">Zarejestruj się</a></li>
+    <li><a asp-action="Login" asp-controller="Account" class="link">Zaloguj się</a></li>
+    <li><a asp-action="Register" asp-controller="Account" class="link">Zarejestruj się</a></li>
 }
 
