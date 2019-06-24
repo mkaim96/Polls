@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polls.Core.Repositories;
 using Polls.Infrastructure.Dapper.TypeHandlers;
 using Polls.Infrastructure.Ef;
-using Polls.Infrastructure.Repositories;
 using Polls.Infrastructure.Services;
 using Polls.Infrastructure.Services.Interfaces;
 
@@ -44,7 +37,7 @@ namespace Polls.Mvc
 
             services.AddCors();
 
-           SqlMapper.AddTypeHandler(new CsvTypeHandler());
+            SqlMapper.AddTypeHandler(new CsvTypeHandler());
 
             #region Setting up entity framework and Identity
 
