@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using MediatR;
 using Polls.Core.Statistics;
 using System;
 using System.Collections.Generic;
