@@ -17,4 +17,17 @@
     <ProjectReference Include="..\Polls.Infrastructure\Polls.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\vue\create-poll\css\app.5b1cb4c3.css" />
+    <None Include="wwwroot\vue\create-poll\js\app.094a62cf.js" />
+    <None Include="wwwroot\vue\create-poll\js\app.094a62cf.js.map" />
+    <None Include="wwwroot\vue\create-poll\js\chunk-vendors.9e9d1747.js" />
+    <None Include="wwwroot\vue\create-poll\js\chunk-vendors.9e9d1747.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\vue\edit-poll\css\" />
+    <Folder Include="wwwroot\vue\edit-poll\js\" />
+  </ItemGroup>
+
 </Project>
