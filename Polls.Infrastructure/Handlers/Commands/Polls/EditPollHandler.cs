@@ -161,7 +161,10 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                             x.Choices
                         });
 
-                        var task = cnn.ExecuteAsync("dbo.spMultipleChoiceQuestions_Update", multipleChoiceQuestionsToUpdate, transaction: tr);
+                        var task = cnn.ExecuteAsync("dbo.spMultipleChoiceQuestions_Update", 
+                            multipleChoiceQuestionsToUpdate,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
