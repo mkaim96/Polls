@@ -20,9 +20,9 @@ namespace Polls.Infrastructure.Services
                 cnn.Open();
                 var tr = cnn.BeginTransaction();
 
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                var repo = new QueriesRepoUoW(tr);
 
-                await pollsRepo.Delete(id);
+                await repo.Delete(id);
 
                 tr.Commit();
             }
@@ -35,9 +35,9 @@ namespace Polls.Infrastructure.Services
                 cnn.Open();
                 var tr = cnn.BeginTransaction();
 
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                var repo = new QueriesRepoUoW(tr);
 
-                var poll = await pollsRepo.Get(id);
+                var poll = await repo.Get(id);
 
                 tr.Commit();
 
@@ -61,9 +61,9 @@ namespace Polls.Infrastructure.Services
 
                 var tr = cnn.BeginTransaction();
 
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                var repo = new QueriesRepoUoW(tr);
 
-                var polls = await pollsRepo.GetAll(userId);
+                var polls = await repo.GetAll(userId);
 
                 tr.Commit();
                 cnn.Close();

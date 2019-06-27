@@ -26,12 +26,12 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 cnn.Open();
 
                 var tr = cnn.BeginTransaction();
-                var _pollsRepo = new PollsRepositoryTr(tr);
+                var repo = new QueriesRepoUoW(tr);
 
-                var t1 = _pollsRepo.Get(request.PollId);
+                var t1 = repo.Get(request.PollId);
                 tasks.Add(t1);
 
-                var t2 = _pollsRepo.GetAnswers(request.PollId);
+                var t2 = repo.GetAnswers(request.PollId);
                 tasks.Add(t2);
 
                 await Task.WhenAll(tasks);

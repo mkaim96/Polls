@@ -34,9 +34,6 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
                 var tr = cnn.BeginTransaction();
 
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
-                IQuestionsRepository questionsRepo = new QuestionsRepositoryTr(tr);
-
                 try
                 {
                     // Delete single choice questions.
@@ -71,7 +68,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                                 );
                         });
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spSingleChoiceQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
@@ -87,7 +88,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                                 );
                         });
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spTextAnswerQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
@@ -101,7 +106,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                             return new MultipleChoiceQuestion(request.PollId, x.QuestionType, x.QuestionText, x.Number, x.Choices);
                         });
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spMultipleChoiceQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
@@ -170,16 +179,28 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     }
 
 
-                    // Upadte poll.
+                    // Get poll.
                     var poll = await cnn.QuerySingleAsync<Poll>(
                         "select * from dbo.Polls where Id = @PollId",
                         new { request.PollId },
                         transaction: tr);
 
+                    // Update poll.
                     poll.SetTitle(request.NewTitle);
                     poll.SetDescription(request.NewDescription);
 
-                    var updatePollTask = pollsRepo.Update(poll);
+                    var parameters = new
+                    {
+                        NewTitle = poll.Title,
+                        NewDescription = poll.Description,
+                        PollId = poll.Id
+                    };
+
+                    var updatePollTask = cnn.ExecuteAsync(
+                        "dbo.spPolls_Update",
+                        parameters,
+                        transaction: tr,
+                        commandType: CommandType.StoredProcedure);
 
                     tasks.Add(updatePollTask);
 

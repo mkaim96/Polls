@@ -11,7 +11,6 @@ using Dapper;
 using Polls.Infrastructure.Dto;
 using System.Linq;
 using System.Data;
-using Polls.Infrastructure.Repositories;
 
 namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
@@ -27,15 +26,15 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 
                 var tr = cnn.BeginTransaction();
 
-                // Pass transaction to repository/repositories
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
-                IQuestionsRepository questionsRepo = new QuestionsRepositoryTr(tr);
-
                 try
                 {
-                    var poll = new Poll(request.UserId, request.Title, request.Description);
+                    var pollParams = new { request.UserId, request.Title, request.Description };
                     // Insert poll and get Id of inserted row
-                    var pollId = await pollsRepo.InsertPollOutId(poll);
+                    var pollId = await cnn.QuerySingleAsync<int>(
+                        "dbo.spPolls_Insert",
+                        pollParams,
+                        transaction: tr,
+                        commandType: CommandType.StoredProcedure);
 
                     // insert SingleChoiceQuestions if any
                     if (request.SingleChoiceQuestions.Count > 0)
@@ -48,7 +47,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                                 );
                         }).ToList();
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spSingleChoiceQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
@@ -63,7 +66,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                                 );
                         }).ToList();
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spMultipleChoiceQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
                     }
@@ -78,7 +85,11 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                                 );
                         }).ToList();
 
-                        var task = questionsRepo.Insert(questions);
+                        var task = cnn.ExecuteAsync(
+                            "dbo.spTextAnswerQuestions_Insert",
+                            questions,
+                            transaction: tr,
+                            commandType: CommandType.StoredProcedure);
 
                         tasks.Add(task);
 

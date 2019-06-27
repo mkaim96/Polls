@@ -26,9 +26,9 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 cnn.Open();
                 var tr = cnn.BeginTransaction();
 
-                IPollsRepository pollsRepo = new PollsRepositoryTr(tr);
+                var repo = new QueriesRepoUoW(tr);
 
-                poll = await pollsRepo.Get(pollId);
+                poll = await repo.Get(pollId);
                 tr.Commit();
                 cnn.Close();
             }
