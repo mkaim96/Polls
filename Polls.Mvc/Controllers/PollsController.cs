@@ -51,7 +51,7 @@ namespace Polls.Mvc.Controllers
             return View(model);
         }
 
-        [Route("{id}/statistics")]
+        [Route("statistics/{id}")]
         public async Task<IActionResult> Statistics(int id)
         {
             var request = new GenerateStatistics { PollId = id };
@@ -80,13 +80,15 @@ namespace Polls.Mvc.Controllers
         [Route("submit-solution")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SubmitSolution(IFormCollection form)
+        public async Task<IActionResult> SubmitSolution(IFormCollection form)
         {
             var request = new AddAnswers { Form = (FormCollection)form };
-            _mediator.Send(request);
+            await _mediator.Send(request);
+
+            var pollId = Convert.ToInt32(form["PollId"]);
 
             // TODO: Return view with thanks to respondent
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Statistics", new { id = pollId });
         }
 
         [Route("delete/{id}")]
@@ -97,7 +99,7 @@ namespace Polls.Mvc.Controllers
         }
 
         [Route("edit")]
-        public IActionResult Edit(int id)
+        public IActionResult Edit()
         {
             return View();
         }
@@ -108,6 +110,15 @@ namespace Polls.Mvc.Controllers
         {
             await _mediator.Send(request);
             return Ok();
+        }
+
+        [Route("clear-answers")]
+        public async Task<IActionResult> ClearAnswers(int id)
+        {
+            var request = new ClearAnswers { PollId = id };
+            await _mediator.Send(request);
+
+            return RedirectToAction("Details", new { id });
         }
 
         [HttpGet]
