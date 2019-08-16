@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Polls.Core.Repositories;
 using Polls.Infrastructure.Commands.Polls;
-using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services.Interfaces;
-using Polls.Mvc.Models;
 using Polls.Mvc.Models.Polls;
 
 namespace Polls.Mvc.Controllers
@@ -48,21 +43,20 @@ namespace Polls.Mvc.Controllers
                 Poll = poll,
                 QuestionCount = poll.Questions.Count()
             };
+
             return View(model);
         }
 
-        [Route("statistics/{id}")]
-        public async Task<IActionResult> Statistics(int id)
+        [HttpGet]
+        [Route("create")]
+        public IActionResult Create()
         {
-            var request = new GenerateStatistics { PollId = id };
-            var model = await _mediator.Send(request);
-
-            return View(model);
+            return View();
         }
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> CreatePoll([FromBody]CreatePoll request)
+        public async Task<IActionResult> Create([FromBody]CreatePoll request)
         {
             request.UserId = GetUserId();
 
@@ -71,34 +65,16 @@ namespace Polls.Mvc.Controllers
             return Ok();
         }
 
-        [Route("create")]
-        public IActionResult CreatePoll()
-        {
-            return View();
-        }
-
-        [Route("submit-solution")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitSolution(IFormCollection form)
-        {
-            var request = new AddAnswers { Form = (FormCollection)form };
-            await _mediator.Send(request);
-
-            var pollId = Convert.ToInt32(form["PollId"]);
-
-            // TODO: Return view with thanks to respondent
-            return RedirectToAction("Statistics", new { id = pollId });
-        }
-
         [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _pollsService.Delete(id);
+
             return RedirectToAction("Index", "Home");
         }
 
         [Route("edit")]
+        [HttpGet]
         public IActionResult Edit()
         {
             return View();
@@ -109,16 +85,8 @@ namespace Polls.Mvc.Controllers
         public async Task<IActionResult> Edit([FromBody]EditPoll request)
         {
             await _mediator.Send(request);
+
             return Ok();
-        }
-
-        [Route("clear-answers")]
-        public async Task<IActionResult> ClearAnswers(int id)
-        {
-            var request = new ClearAnswers { PollId = id };
-            await _mediator.Send(request);
-
-            return RedirectToAction("Details", new { id });
         }
 
         [HttpGet]
@@ -126,14 +94,15 @@ namespace Polls.Mvc.Controllers
         [Route("edit/poll/{id}")]
         public async Task<IActionResult> GetPollToEdit(int id)
         {
-            var poll =  await _pollsService.Get(id);
+            var poll = await _pollsService.Get(id);
 
-            return Ok(new {
+            return Ok(new
+            {
                 pollId = poll.Id,
                 title = poll.Title,
                 description = poll.Description,
                 questions = poll.Questions.OrderBy(x => x.Number)
-            });;
+            }); ;
         }
 
         #region helpers
