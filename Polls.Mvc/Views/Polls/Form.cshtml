@@ -9,7 +9,7 @@
         <h2 class="form-title">@Model.Title</h2>
         <h4 class="form-desc">@Model.Description</h4>
 
-        <form asp-action="SubmitSolution" asp-controller="Polls" method="post">
+        <form asp-action="SaveAnswers" asp-controller="Answers" method="post">
             <input type="hidden" name="PollId" value="@Model.Id" />
             @foreach (var question in Model.Questions)
             {

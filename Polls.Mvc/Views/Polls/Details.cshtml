@@ -12,12 +12,11 @@
 
 <a asp-action="DisplayForm" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Podgląd</a> | 
 
-<a asp-action="Statistics" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Pokaż statystyki</a> |
+<a asp-action="Charts" asp-controller="Stats" asp-route-id="@Model.Poll.Id" class="link">Pokaż statystyki</a> |
 
-<a asp-action="ClearAnswers" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Wyczyść odpowiedzi</a> |
+<a asp-action="Clear" asp-controller="Answers" asp-route-id="@Model.Poll.Id" class="link">Wyczyść odpowiedzi</a> |
 
 <a asp-action="Delete" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Usuń</a>
-
 
 
 <h3>@Model.Poll.Title</h3>
