@@ -90,7 +90,7 @@ namespace Polls.Mvc
             app.UseCookiePolicy();
 
             app.UseCors(
-                options => options.WithOrigins(@"https://localhost:44392").AllowAnyMethod()
+                options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
             );
 
             app.UseMvc(routes =>
