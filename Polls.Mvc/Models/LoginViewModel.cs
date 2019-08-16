@@ -18,7 +18,7 @@ namespace Polls.Mvc.Models
         [Display(Name ="Hasło")]
         public string Password { get; set; }
 
-        [Display(Name ="Zaamietać Cię?")]
+        [Display(Name ="Zapamietać Cię?")]
         public bool RememberMe { get; set; }
     }
 }
