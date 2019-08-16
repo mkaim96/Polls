@@ -65,3 +65,20 @@ nav ul {
 .text-highlight {
     font-weight: bold;
 }
+
+.form-group {
+    margin-bottom: 5px;
+}
+.input {
+    display: block;
+    margin: 5px 0;
+}
+
+.questionWrapper {
+    margin-bottom: 50px;
+}
+
+.questionWrapper h2 {
+    display: inline-block;
+    margin: 0 10px 20px 0;
+}
