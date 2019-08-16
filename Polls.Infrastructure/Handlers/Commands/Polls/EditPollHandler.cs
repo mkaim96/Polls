@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Data;
-using Polls.Core.Repositories;
 using Polls.Infrastructure.Repositories;
 using Polls.Core.Domain;
 

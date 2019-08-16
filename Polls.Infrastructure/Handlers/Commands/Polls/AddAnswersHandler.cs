@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using MediatR;
 using Polls.Core.Domain;
-using Polls.Core.Repositories;
 using Polls.Infrastructure;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Repositories;

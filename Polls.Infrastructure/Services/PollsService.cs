@@ -1,5 +1,4 @@
 ﻿using Polls.Core.Domain;
-using Polls.Core.Repositories;
 using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.Repositories;
 using Polls.Infrastructure.Services.Interfaces;

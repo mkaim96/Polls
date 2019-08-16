@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Polls.Core.Repositories;
 using Polls.Core.Domain;
 using Polls.Infrastructure.Commands.Polls;
 using System;
