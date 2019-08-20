@@ -18,18 +18,18 @@ namespace Polls.Mvc.Controllers
     public class HomeController : Controller
     {
         private readonly IMediator _mediator;
-        private IPollsService _pollsService;
         private UserManager<ApplicationUser> _userManager;
 
-        public HomeController(IMediator mediator, IPollsService pollsService, UserManager<ApplicationUser> userManager)
+        public HomeController(IMediator mediator, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
-            _pollsService = pollsService;
             _userManager = userManager;
         }
         public async Task<IActionResult> Index()
         {
-            var model = await _pollsService.GetAll(GetUserId());
+            var request = new GetAll { UserId = GetUserId() };
+            var model = await _mediator.Send(request);
+
             return View(model);
         }
 

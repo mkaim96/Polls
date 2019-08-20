@@ -15,14 +15,12 @@ namespace Polls.Mvc.Controllers
     [Route("polls/")]
     public class PollsController : Controller
     {
-        private IPollsService _pollsService;
         private UserManager<ApplicationUser> _userManager;
         private IMediator _mediator;
 
-        public PollsController(IMediator mediator, IPollsService pollsService, UserManager<ApplicationUser> userManager)
+        public PollsController(IMediator mediator, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
-            _pollsService = pollsService;
             _userManager = userManager;
         }
 
@@ -30,14 +28,18 @@ namespace Polls.Mvc.Controllers
         [Route("form/{id}")]
         public async Task<IActionResult> DisplayForm([FromRoute]int id)
         {
-            var model = await _pollsService.Get(id);
+            var request = new GetPoll { Id = id };
+            var model = await _mediator.Send(request);
+
             return View("Form", model);
         }
 
         [Route("details/{id}")]
         public async Task<IActionResult> Details([FromRoute]int id)
         {
-            var poll = await _pollsService.Get(id);
+            var request = new GetPoll { Id = id };
+            var poll = await _mediator.Send(request);
+
             var model = new DetailsViewModel
             {
                 Poll = poll,
@@ -67,8 +69,10 @@ namespace Polls.Mvc.Controllers
 
         [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
-        {
-            await _pollsService.Delete(id);
+        { 
+
+            var request = new DeletePoll { Id = id };
+            await _mediator.Send(request);
 
             return RedirectToAction("Index", "Home");
         }
@@ -94,7 +98,8 @@ namespace Polls.Mvc.Controllers
         [Route("edit/poll/{id}")]
         public async Task<IActionResult> GetPollToEdit(int id)
         {
-            var poll = await _pollsService.Get(id);
+            var request = new GetPoll { Id = id };
+            var poll = await _mediator.Send(request);
 
             return Ok(new
             {
