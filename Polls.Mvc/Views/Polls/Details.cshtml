@@ -10,7 +10,7 @@
 
 <a asp-action="Edit" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Edytuj</a> |
 
-<a asp-action="DisplayForm" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Podgląd</a> | 
+<a asp-action="DisplayForm" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Podgląd</a> |
 
 <a asp-action="Charts" asp-controller="Stats" asp-route-id="@Model.Poll.Id" class="link">Pokaż statystyki</a> |
 
@@ -18,11 +18,14 @@
 
 <a asp-action="Delete" asp-controller="Polls" asp-route-id="@Model.Poll.Id" class="link">Usuń</a>
 
-
 <h3>@Model.Poll.Title</h3>
 <h4>@Model.Poll.Description</h4>
+
 
 <div>
     <p>Liczba pytan: @Model.QuestionCount</p>
 </div>
 
+<label>Link: </label><input type="text" id="link" /> <button id="copy">Kopiuj</button>
+
+<script src="~/js/CopyLinkToForm.js"></script>
