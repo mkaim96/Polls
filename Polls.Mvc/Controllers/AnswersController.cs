@@ -25,10 +25,7 @@ namespace Polls.Mvc.Controllers
             var request = new AddAnswers { Form = (FormCollection)form };
             await _mediator.Send(request);
 
-            //var pollId = Convert.ToInt32(form["PollId"]);
-
-            // TODO: Return view with thanks to respondent
-            return RedirectToAction("Index", "Home");
+            return View("AnswersSubmitted");
         }
 
         [Route("clear/{id}")]
