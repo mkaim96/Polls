@@ -9,6 +9,10 @@ namespace Polls.Core.Statistics.StatsGenerators
     {
         public QuestionStatistics Generate(Question q, List<Answer> answers)
         {
+            if (!(q is SingleChoiceQuestion))
+            {
+                throw new ArgumentException();
+            }
             var question = (SingleChoiceQuestion)q;
 
             var choicesCount = new Dictionary<string, int>();

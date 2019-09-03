@@ -9,6 +9,11 @@ namespace Polls.Core.Statistics.StatsGenerators
     {
         public QuestionStatistics Generate(Question q, List<Answer> answers)
         {
+            if (!(q is MultipleChoiceQuestion))
+            {
+                throw new ArgumentException();
+            }
+
             var question = (MultipleChoiceQuestion)q;
 
             var choicesCount = new Dictionary<string, int>();

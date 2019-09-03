@@ -9,6 +9,11 @@ namespace Polls.Core.Statistics.StatsGenerators
     {
         public QuestionStatistics Generate(Question q, List<Answer> answers)
         {
+            if (!(q is TextAnswerQuestion))
+            {
+                throw new ArgumentException();
+            }
+
             var stats = new TextAnswerQuestionStatistics
             {
                 Question = q,
