@@ -3,6 +3,7 @@ using Polls.Core.Domain;
 using Polls.Core.Statistics;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Repositories;
+using Polls.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,31 +15,25 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
     public class GenerateStatisticsHandler : IRequestHandler<GenerateStatistics, IEnumerable<QuestionStatistics>>
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public GenerateStatisticsHandler(IUnitOfWork uow)
+        {
+            _unitOfWork = uow;
+        }
         public async Task<IEnumerable<QuestionStatistics>> Handle(GenerateStatistics request, CancellationToken cancellationToken)
         {
-            Poll poll;
-            IEnumerable<Answer> answers = new List<Answer>();
-            var tasks = new List<Task>();
+            // Run tasks asynchronously.
+            var t1 = _unitOfWork.Polls.Get(request.PollId);
+            var t2 = _unitOfWork.Answers.GetAll(request.PollId);
 
-            using (var cnn = Connection.GetConnection())
-            {
-                cnn.Open();
 
-                var tr = cnn.BeginTransaction();
-                var repo = new QueriesRepoUoW(tr);
+            await Task.WhenAll(t1, t2);
+            _unitOfWork.Complete();
 
-                var t1 = repo.Get(request.PollId);
-                tasks.Add(t1);
-
-                var t2 = repo.GetAnswers(request.PollId);
-                tasks.Add(t2);
-
-                await Task.WhenAll(tasks);
-                tr.Commit();
-
-                poll = t1.Result;
-                answers = t2.Result;
-            }
+            // When tasks are finished assign result to variables.
+            var poll = t1.Result;
+            var answers = t2.Result;
 
             // Answers grouped by id of questions.
             var dict = new Dictionary<string, List<Answer>>();
