@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Data;
+using System.Data.SqlClient;
+using System.Reflection;
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -9,10 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polls.Infrastructure;
 using Polls.Infrastructure.Dapper.TypeHandlers;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.Services;
 using Polls.Infrastructure.Services.Interfaces;
+using Polls.Infrastructure.UnitOfWork;
 
 namespace Polls.Mvc
 {
@@ -66,6 +70,7 @@ namespace Polls.Mvc
 
             services.AddScoped<IPollsService, PollsService>();
 
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
