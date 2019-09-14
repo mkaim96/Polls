@@ -6,6 +6,7 @@ namespace Polls.Infrastructure.UnitOfWork
     {
         IPollsRepository Polls { get; }
         IAnswersRepository Answers { get; }
+        IQuestionsRepository Questions { get; }
 
         void Complete();
     }

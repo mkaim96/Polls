@@ -13,12 +13,15 @@ namespace Polls.Infrastructure.UnitOfWork
 
         public IAnswersRepository Answers { get;  }
 
+        public IQuestionsRepository Questions { get; }
+
         public UnitOfWork()
         {
             _context = new PollsContext();
 
             Polls = new PollsRepository(_context);
             Answers = new AnswersRepository(_context);
+            Questions = new QuestionsRepository(_context);
         }
 
         public void Complete()
