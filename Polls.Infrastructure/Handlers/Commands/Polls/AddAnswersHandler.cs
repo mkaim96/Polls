@@ -4,6 +4,7 @@ using Polls.Core.Domain;
 using Polls.Infrastructure;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Repositories;
+using Polls.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,22 +16,17 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
     public class AddAnswersHandler : AsyncRequestHandler<AddAnswers>
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AddAnswersHandler(IUnitOfWork uow)
+        {
+            _unitOfWork = uow;
+        }
         protected override async Task Handle(AddAnswers request, CancellationToken cancellationToken)
         {
             var pollId = Convert.ToInt32(request.Form["PollId"]);
 
-            Poll poll;
-            using (var cnn = Connection.GetConnection())
-            {
-                cnn.Open();
-                var tr = cnn.BeginTransaction();
-
-                var repo = new QueriesRepoUoW(tr);
-
-                poll = await repo.Get(pollId);
-                tr.Commit();
-                cnn.Close();
-            }
+            var poll = await _unitOfWork.Polls.Get(pollId);
 
             var scQuestions = poll.GetConcreteQuestions<SingleChoiceQuestion>();
             var taQuestions = poll.GetConcreteQuestions<TextAnswerQuestion>();
@@ -88,30 +84,14 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 }
             }
 
+            // Insert prepared lists of answers to database
+            var t1 = _unitOfWork.Answers.InsertMany(scQuestionAnswers);
+            var t2 = _unitOfWork.Answers.InsertMany(taQuestionAnswers);
+            var t3 = _unitOfWork.Answers.InsertMany(mcQuestionAnswers);
 
-            // Insert answers to database.
-            var scAnswerSql = @"INSERT INTO dbo.SingleChoiceAnswers (QuestionId, Choice) VALUES (@QuestionId, @Choice)";
-            var textAnswerSql = @"INSERT INTO dbo.TextAnswers (QuestionId, Answer) VALUES (@QuestionId, @Answer)";
-            var mcAnswerSql = @"INSERT INTO dbo.MultipleChoiceAnswers (QuestionId, Choices) VALUES (@QuestionId, @Choices)";
+            await Task.WhenAll(t1, t2, t3);
 
-            using (var cnn = Connection.GetConnection())
-            {
-                cnn.Open();
-
-                using (var tr = cnn.BeginTransaction())
-                {
-                    var t1 = cnn.ExecuteAsync(scAnswerSql, scQuestionAnswers, transaction: tr);
-                    var t2 = cnn.ExecuteAsync(textAnswerSql, taQuestionAnswers, transaction: tr);
-
-                    var t3 = cnn.ExecuteAsync(mcAnswerSql, mcQuestionAnswers, transaction: tr);
-
-                    await Task.WhenAll(t1, t2, t3);
-
-                    tr.Commit();
-                }
-            }
-
-
+            _unitOfWork.Complete();
         }
     }
 }

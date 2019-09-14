@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Polls.Infrastructure.Commands.Polls;
 using Polls.Infrastructure.Repositories;
+using Polls.Infrastructure.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,28 +12,16 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
 {
     public class DeletePollHandler : AsyncRequestHandler<DeletePoll>
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public DeletePollHandler(IUnitOfWork uow)
+        {
+            _unitOfWork = uow;
+        }
         protected override async Task Handle(DeletePoll request, CancellationToken cancellationToken)
         {
-            using (var cnn = Connection.GetConnection())
-            {
-                cnn.Open();
-
-                var tr = cnn.BeginTransaction();
-
-                var repo = new QueriesRepoUoW(tr);
-
-                await repo.Delete(request.Id);
-
-                try
-                {
-                    tr.Commit();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Commit Exception type: {0}", ex.GetType());
-                    Console.WriteLine(" Message: {0}", ex.Message);
-                }
-            }
+            await _unitOfWork.Polls.Delete(request.Id);
+            _unitOfWork.Complete();
         }
     }
 }
