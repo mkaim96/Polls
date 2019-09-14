@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Polls.Infrastructure;
 using Polls.Infrastructure.Dapper.TypeHandlers;
 using Polls.Infrastructure.Ef;
+using Polls.Infrastructure.Services;
+using Polls.Infrastructure.Services.Interfaces;
 using Polls.Infrastructure.UnitOfWork;
 
 namespace Polls.Mvc
@@ -65,6 +67,8 @@ namespace Polls.Mvc
             #endregion
 
             services.AddMediatR(typeof(ApplicationDbContext).GetTypeInfo().Assembly);
+
+            services.AddScoped<IPollsService, PollsService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
