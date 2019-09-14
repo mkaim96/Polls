@@ -18,6 +18,35 @@ namespace Polls.Infrastructure.Repositories
         {
             _context = ctx;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="poll"></param>
+        /// <returns>id of inserted poll</returns>
+        public async Task<int> Add(Poll poll)
+        {
+            var pollParams = new { poll.UserId, poll.Title, poll.Description };
+            // Insert poll and get Id of inserted row
+            var pollId = await _context.Conn.QuerySingleAsync<int>(
+                "dbo.spPolls_Insert",
+                pollParams,
+                transaction: _context.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return pollId;
+        }
+
+        public async Task<int> Delete(int pollId)
+        {
+            var sql = @"delete from dbo.SingleChoiceQuestions Where PollId = @id;
+                        delete from dbo.TextAnswerQuestions Where PollId = @id;
+                        delete from dbo.MultipleChoiceQuestions Where PollId = @id;
+                        delete from dbo.Polls Where Id = @id";
+
+            return await _context.Conn.ExecuteAsync(sql, new { id = pollId }, transaction: _context.Transaction);
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -46,6 +75,22 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = "SELECT * FROM dbo.Polls p WHERE p.UserId = @userId";
             return await _context.Conn.QueryAsync<Poll>(sql, new { userId }, transaction: _context.Transaction);
+        }
+
+        public async Task<int> Update(int id, string newTitle, string newDescription)
+        {
+            var parameters = new
+            {
+                NewTitle = newTitle,
+                NewDescription = newDescription,
+                PollId = id
+            };
+
+            return await _context.Conn.ExecuteAsync(
+                "dbo.spPolls_Update",
+                parameters,
+                transaction: _context.Transaction,
+                commandType: CommandType.StoredProcedure);
         }
     }
 }

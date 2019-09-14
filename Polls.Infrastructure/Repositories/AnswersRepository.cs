@@ -18,6 +18,37 @@ namespace Polls.Infrastructure.Repositories
         }
 
         /// <summary>
+        /// Deletes all answers for poll with given id
+        /// </summary>
+        /// <param name="pollId"></param>
+        /// <returns></returns>
+        public async Task Clear(int pollId)
+        {
+            var deleteScaSql = @"DELETE sca 
+                        FROM dbo.SingleChoiceAnswers sca 
+                        JOIN dbo.SingleChoiceQuestions scq on sca.QuestionId = scq.Id
+                        JOIN dbo.Polls p on scq.PollId = p.Id
+                        WHERE p.Id = @PollId";
+
+            var deleteMcaSql = @"DELETE mca
+                        FROM dbo.MultipleChoiceAnswers mca
+                        JOIN dbo.MultipleChoiceQuestions mcq on mca.QuestionId = mcq.Id
+                        JOIN dbo.Polls p on mcq.PollId = p.Id";
+
+            var deleteTaSql = @"DELETE ta
+                        FROM dbo.TextAnswers ta
+                        JOIN dbo.TextAnswerQuestions taq on ta.QuestionId = taq.Id
+                        JOIN dbo.Polls p on taq.PollId = p.Id";
+
+
+            var t1 = _context.Conn.ExecuteAsync(deleteScaSql, new { PollId = pollId}, transaction: _context.Transaction);
+            var t2 = _context.Conn.ExecuteAsync(deleteMcaSql, new { PollId = pollId }, transaction: _context.Transaction);
+            var t3 = _context.Conn.ExecuteAsync(deleteTaSql, new { PollId = pollId}, transaction: _context.Transaction);
+
+            await Task.WhenAll(t1, t2, t3);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="pollId"></param>
@@ -45,6 +76,28 @@ namespace Polls.Infrastructure.Repositories
             answers.AddRange(answersReader.Read<MultipleChoiceAnswer>());
 
             return answers;
+        }
+
+        public async Task<int> InsertMany(IEnumerable<SingleChoiceAnswer> answers)
+        {
+            var sql = @"INSERT INTO dbo.SingleChoiceAnswers (QuestionId, Choice) VALUES (@QuestionId, @Choice)";
+
+            return await _context.Conn.ExecuteAsync(sql, answers, transaction: _context.Transaction);
+
+        }
+
+        public async Task<int> InsertMany(IEnumerable<MultipleChoiceAnswer> answers)
+        {
+            var sql = @"INSERT INTO dbo.MultipleChoiceAnswers (QuestionId, Choices) VALUES (@QuestionId, @Choices)";
+
+            return await _context.Conn.ExecuteAsync(sql, answers, transaction: _context.Transaction);
+        }
+
+        public async Task<int> InsertMany(IEnumerable<TextAnswer> answers)
+        {
+            var sql = @"INSERT INTO dbo.TextAnswers (QuestionId, Answer) VALUES (@QuestionId, @Answer)";
+
+            return await _context.Conn.ExecuteAsync(sql, answers, transaction: _context.Transaction);
         }
     }
 }
