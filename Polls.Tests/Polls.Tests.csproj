@@ -1,7 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Polls.Domain\Polls.Core.csproj" />
+    <ProjectReference Include="..\Polls.Infrastructure\Polls.Infrastructure.csproj" />
+    <ProjectReference Include="..\Polls.Mvc\Polls.Mvc.csproj" />
+  </ItemGroup>
 
 </Project>
