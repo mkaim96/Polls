@@ -20,7 +20,10 @@ namespace Polls.Core.Statistics.StatsGenerators
             // Initialize dictionary with each choice as key and give it an initial value of 0.
             foreach (var choice in question.Choices)
             {
-                choicesCount.Add(choice, 0);
+                if(!choicesCount.ContainsKey(choice))
+                {
+                    choicesCount.Add(choice, 0);
+                }
             }
 
             // Go through every answer and increase count.
