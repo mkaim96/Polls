@@ -24,7 +24,7 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = @"delete from dbo.SingleChoiceQuestions where Id in @Ids";
 
-            var Ids = questions.Select(x => x.Id);
+            var Ids = questions.Select(x => x.Id).ToList();
 
             return await _context.Conn.ExecuteAsync(sql, new { Ids }, transaction: _context.Transaction);
 
@@ -34,7 +34,7 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = @"delete from dbo.MultipleChoiceQuestions where Id in @Ids";
 
-            var Ids = questions.Select(x => x.Id);
+            var Ids = questions.Select(x => x.Id).ToList();
 
             return await _context.Conn.ExecuteAsync(sql, new { Ids }, transaction: _context.Transaction);
         }
@@ -43,7 +43,7 @@ namespace Polls.Infrastructure.Repositories
         {
             var sql = @"delete from dbo.TextAnswerQuestions where Id in @Ids";
 
-            var Ids = questions.Select(x => x.Id);
+            var Ids = questions.Select(x => x.Id).ToList();
 
             return await _context.Conn.ExecuteAsync(sql, new { Ids }, transaction: _context.Transaction);
         }
