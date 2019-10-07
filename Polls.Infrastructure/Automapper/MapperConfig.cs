@@ -12,19 +12,14 @@ namespace Polls.Infrastructure.Automapper
         public MapperConfig()
         {
             CreateMap<Question, QuestionDto>()
+                .ReverseMap()
                 .IncludeAllDerived();
 
-            CreateMap<QuestionDto, Question>()
-                .IncludeAllDerived();
+            CreateMap<SingleChoiceQuestion, SingleChoiceQuestionDto>().ReverseMap();
 
-            CreateMap<SingleChoiceQuestion, SingleChoiceQuestionDto>();
-            CreateMap<SingleChoiceQuestionDto, SingleChoiceQuestion>();
+            CreateMap<MultipleChoiceQuestion, MultipleChoiceQuestionDto>().ReverseMap();
 
-            CreateMap<MultipleChoiceQuestion, MultipleChoiceQuestionDto>();
-            CreateMap<MultipleChoiceQuestionDto, MultipleChoiceQuestion>();
-
-            CreateMap<TextAnswerQuestion, TextAnswerQuestionDto>();
-            CreateMap<TextAnswerQuestionDto, TextAnswerQuestion>();
+            CreateMap<TextAnswerQuestion, TextAnswerQuestionDto>().ReverseMap();
         }
     }
 }
