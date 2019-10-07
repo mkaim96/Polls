@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
+using AutoMapper;
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polls.Infrastructure;
+using Polls.Infrastructure.Automapper;
 using Polls.Infrastructure.Dapper.TypeHandlers;
 using Polls.Infrastructure.Ef;
 using Polls.Infrastructure.UnitOfWork;
@@ -65,6 +67,8 @@ namespace Polls.Mvc
             #endregion
 
             services.AddMediatR(typeof(ApplicationDbContext).GetTypeInfo().Assembly);
+
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperConfig)));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
