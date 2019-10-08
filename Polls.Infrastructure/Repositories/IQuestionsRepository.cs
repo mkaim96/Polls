@@ -11,12 +11,12 @@ namespace Polls.Infrastructure.Repositories
         Task<int> InsertMany(IEnumerable<MultipleChoiceQuestion> questions);
         Task<int> InsertMany(IEnumerable<TextAnswerQuestion> questions);
 
-        Task<int> DeleteMany(IEnumerable<SingleChoiceQuestionDto> questions);
-        Task<int> DeleteMany(IEnumerable<MultipleChoiceQuestionDto> questions);
-        Task<int> DeleteMany(IEnumerable<TextAnswerQuestionDto> questions);
+        Task<int> DeleteMany(IEnumerable<SingleChoiceQuestion> questions);
+        Task<int> DeleteMany(IEnumerable<MultipleChoiceQuestion> questions);
+        Task<int> DeleteMany(IEnumerable<TextAnswerQuestion> questions);
 
-        Task<int> UpdateMany(IEnumerable<SingleChoiceQuestionDto> questions);
-        Task<int> UpdateMany(IEnumerable<MultipleChoiceQuestionDto> questions);
-        Task<int> UpdateMany(IEnumerable<TextAnswerQuestionDto> questions);
+        Task<int> UpdateMany(IEnumerable<SingleChoiceQuestion> questions);
+        Task<int> UpdateMany(IEnumerable<MultipleChoiceQuestion> questions);
+        Task<int> UpdateMany(IEnumerable<TextAnswerQuestion> questions);
     }
 }

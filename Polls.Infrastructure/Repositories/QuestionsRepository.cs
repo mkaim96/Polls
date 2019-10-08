@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using Polls.Core.Domain;
 using Polls.Infrastructure.Dto;
 using Polls.Infrastructure.UnitOfWork;
@@ -20,7 +21,7 @@ namespace Polls.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<int> DeleteMany(IEnumerable<SingleChoiceQuestionDto> questions)
+        public async Task<int> DeleteMany(IEnumerable<SingleChoiceQuestion> questions)
         {
             var sql = @"delete from dbo.SingleChoiceQuestions where Id in @Ids";
 
@@ -30,7 +31,7 @@ namespace Polls.Infrastructure.Repositories
 
         }
 
-        public async Task<int> DeleteMany(IEnumerable<MultipleChoiceQuestionDto> questions)
+        public async Task<int> DeleteMany(IEnumerable<MultipleChoiceQuestion> questions)
         {
             var sql = @"delete from dbo.MultipleChoiceQuestions where Id in @Ids";
 
@@ -39,7 +40,7 @@ namespace Polls.Infrastructure.Repositories
             return await _context.Conn.ExecuteAsync(sql, new { Ids }, transaction: _context.Transaction);
         }
 
-        public async Task<int> DeleteMany(IEnumerable<TextAnswerQuestionDto> questions)
+        public async Task<int> DeleteMany(IEnumerable<TextAnswerQuestion> questions)
         {
             var sql = @"delete from dbo.TextAnswerQuestions where Id in @Ids";
 
@@ -68,6 +69,7 @@ namespace Polls.Infrastructure.Repositories
 
         public async Task<int> InsertMany(IEnumerable<TextAnswerQuestion> questions)
         {
+            
             return await _context.Conn.ExecuteAsync(
             "dbo.spTextAnswerQuestions_Insert",
             questions,
@@ -75,7 +77,7 @@ namespace Polls.Infrastructure.Repositories
             commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<int> UpdateMany(IEnumerable<SingleChoiceQuestionDto> questions)
+        public async Task<int> UpdateMany(IEnumerable<SingleChoiceQuestion> questions)
         {
             // Prepare params
             var parameters = questions.Select(x => new
@@ -93,7 +95,7 @@ namespace Polls.Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<int> UpdateMany(IEnumerable<MultipleChoiceQuestionDto> questions)
+        public async Task<int> UpdateMany(IEnumerable<MultipleChoiceQuestion> questions)
         {
             // Prepare params 
             var parameters = questions.Select(x => new
@@ -111,7 +113,7 @@ namespace Polls.Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<int> UpdateMany(IEnumerable<TextAnswerQuestionDto> questions)
+        public async Task<int> UpdateMany(IEnumerable<TextAnswerQuestion> questions)
         {
             // Prepare params
             var parameters = questions.Select(x => new
