@@ -9,7 +9,7 @@ namespace Polls.Core.Domain
     {
         public IEnumerable<string> Choices { get; set; }
 
-        public SingleChoiceQuestion()
+        protected SingleChoiceQuestion()
         {
             statsGenerator = new SingleChoiceQuestionStatisticsGenerator();
         }

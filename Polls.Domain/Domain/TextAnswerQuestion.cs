@@ -12,7 +12,7 @@ namespace Polls.Core.Domain
         {
             statsGenerator = new TextAnswerQuestionStatisticsGenerator();
         }
-        public TextAnswerQuestion()
+        protected TextAnswerQuestion()
         {
             statsGenerator = new TextAnswerQuestionStatisticsGenerator();
         }
