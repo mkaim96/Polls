@@ -54,6 +54,25 @@ function createDataObjectForChart(stat) {
     return data;
 }
 
+function createElementForQuestionWithoutAnswers(questionText) {
+    let questionWrapper = document.createElement('div');
+    questionWrapper.setAttribute('class', 'questionWrapper');
+
+    let qText = document.createElement('h2');
+    qText.innerText = questionText;
+
+    let votesCountSmall = document.createElement("small");
+    votesCountSmall.innerText = '(0 odpowiedzi)';
+
+    questionWrapper.appendChild(qText);
+    questionWrapper.appendChild(votesCountSmall);
+
+    var h5 = document.createElement('p');
+    h5.innerText = 'Na razie nie ma odpowiedzi na to pytanie.';
+    questionWrapper.appendChild(h5);
+    return questionWrapper;
+}
+
 function createElementForSingleChoiceQuestion(stat) {
     let questionWrapper = document.createElement('div');
     questionWrapper.setAttribute('class', 'questionWrapper');
@@ -212,6 +231,10 @@ async function main() {
 
     // Create html element for each question
     for (var stat of stats.data) {
+        if (stat.votesCount === 0) {
+            elements.push(createElementForQuestionWithoutAnswers(stat.question.questionText));
+            continue;
+        }
         switch (stat.question.questionType) {
             case 'SingleChoice':
                 elements.push(createElementForSingleChoiceQuestion(stat));

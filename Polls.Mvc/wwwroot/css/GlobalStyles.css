@@ -83,6 +83,10 @@ nav ul {
     margin: 0 10px 20px 0;
 }
 
+.questionWrapper p {
+    margin-left: 30px;
+}
+
 #link {
     width: 370px;
     padding: 5px;
