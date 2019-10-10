@@ -61,9 +61,12 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                     var questionStats = question.GenerateStatistics(dict[question.Id]);
                     stats.Add(questionStats);
                 }
+                else
+                {
+                    var s = question.GenerateStatistics(new List<Answer>());
+                    stats.Add(s);
+                }
             }
-
-            
             return stats.OrderBy(x => x.Question.Number);
         }
     }
