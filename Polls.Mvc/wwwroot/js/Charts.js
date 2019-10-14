@@ -227,23 +227,33 @@ function getRandomColor() {
 async function main() {
     let stats = await getStats();
 
+    console.log(stats);
+
     let elements = [];
 
     // Create html element for each question
     for (var stat of stats.data) {
-        if (stat.votesCount === 0) {
-            elements.push(createElementForQuestionWithoutAnswers(stat.question.questionText));
-            continue;
-        }
         switch (stat.question.questionType) {
             case 'SingleChoice':
-                elements.push(createElementForSingleChoiceQuestion(stat));
+                if(stat.votesCount === 0) {
+                    elements.push(createElementForQuestionWithoutAnswers(stat.question.questionText))
+                } else {
+                    elements.push(createElementForSingleChoiceQuestion(stat));
+                }
                 break;
             case 'MultipleChoice':
-                elements.push(createElementForMultipleChoiceQuestion(stat));
+                if(stat.votesCount === 0) {
+                    elements.push(createElementForQuestionWithoutAnswers(stat.question.questionText))
+                } else {
+                    elements.push(createElementForMultipleChoiceQuestion(stat));
+                }
                 break;
             case 'TextAnswer':
-                elements.push(createElementForTextAnswerQuestion(stat));
+                if(stat.answersCount === 0) {
+                    elements.push(createElementForQuestionWithoutAnswers(stat.question.questionText))
+                } else {
+                    elements.push(createElementForTextAnswerQuestion(stat));
+                }
                 break;
             default:
                 console.log("Nieznany typ pytania");
