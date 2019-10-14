@@ -7,10 +7,11 @@ namespace Polls.Core.Domain
 {
     public class TextAnswerQuestion : Question
     {
-        public  TextAnswerQuestion(int pollId, QuestionType qType, string qText, int number) 
-            : base(pollId, qType, qText, number)
+        public  TextAnswerQuestion(int pollId, string qText, int number) 
+            : base(pollId, qText, number)
         {
             statsGenerator = new TextAnswerQuestionStatisticsGenerator();
+            QuestionType = QuestionType.TextAnswer;
         }
         protected TextAnswerQuestion()
         {

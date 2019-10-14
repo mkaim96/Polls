@@ -65,7 +65,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
             {
                 // Prepare questions.
                 var questions = request.NewScQuestions.Select(x => new SingleChoiceQuestion(
-                    request.PollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                    request.PollId, x.QuestionText, x.Number, x.Choices
                     )
                 );
 
@@ -78,7 +78,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
             {
                 // Prepare questions.
                 var questions = request.NewTaQuestions.Select(x => new TextAnswerQuestion(
-                        request.PollId, x.QuestionType, x.QuestionText, x.Number
+                        request.PollId, x.QuestionText, x.Number
                         )
                 );
 
@@ -91,7 +91,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
             {
                 // Prepare questions.
                 var questions = request.NewMcQuestions.Select(x => new MultipleChoiceQuestion(
-                        request.PollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                        request.PollId, x.QuestionText, x.Number, x.Choices
                         )
                 );
 

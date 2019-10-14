@@ -10,7 +10,7 @@ namespace Polls.Core.Domain
         protected IStatisticsGenerator statsGenerator;
         public string Id { get; set; }
         public int PollId { get; set; }
-        public QuestionType QuestionType { get; set; }
+        public QuestionType QuestionType { get; protected set; }
         public string QuestionText { get; set; }
         public int Number { get; set; }
 
@@ -19,11 +19,10 @@ namespace Polls.Core.Domain
 
         }
 
-        public Question(int pollId, QuestionType qType, string qText, int number)
+        public Question(int pollId, string qText, int number)
         {
             Id = Guid.NewGuid().ToString();
             PollId = pollId;
-            QuestionType = qType;
             QuestionText = qText;
             Number = number;
         }

@@ -37,7 +37,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 var questions = request.SingleChoiceQuestions.Select(x =>
                 {
                     return new SingleChoiceQuestion(
-                        pollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                        pollId, x.QuestionText, x.Number, x.Choices
                         );
                 }).ToList();
 
@@ -52,7 +52,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 var questions = request.MultipleChoiceQuestions.Select(x =>
                 {
                     return new MultipleChoiceQuestion(
-                        pollId, x.QuestionType, x.QuestionText, x.Number, x.Choices
+                        pollId, x.QuestionText, x.Number, x.Choices
                         );
                 }).ToList();
 
@@ -67,7 +67,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                 var questions = request.TextAnswerQuestions.Select(x =>
                 {
                     return new TextAnswerQuestion(
-                        pollId, x.QuestionType, x.QuestionText, x.Number
+                        pollId, x.QuestionText, x.Number
                         );
                 }).ToList();
 
