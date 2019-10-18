@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
 using AutoMapper;
@@ -46,7 +47,9 @@ namespace Polls.Mvc
             #region Setting up entity framework and Identity
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("Polls_Db"), x => x.MigrationsAssembly("Polls.Mvc"))
+                    options.UseSqlServer(
+                        Environment.GetEnvironmentVariable("SQLCONNSTR_polls_db"),
+                        x => x.MigrationsAssembly("Polls.Mvc"))
                 );
 
             services.AddIdentity<ApplicationUser, IdentityRole>()

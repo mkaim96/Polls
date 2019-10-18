@@ -10,7 +10,7 @@ namespace Polls.Infrastructure
     {
         public static IDbConnection GetConnection()
         {
-            return new SqlConnection("Server=(LocalDb)\\MSSQLLocalDB;Database=Polls_Db;Trusted_Connection=True;MultipleActiveResultSets=True");
+            return new SqlConnection(Environment.GetEnvironmentVariable("SQLCONNSTR_polls_db"));
         }
     }
 }
