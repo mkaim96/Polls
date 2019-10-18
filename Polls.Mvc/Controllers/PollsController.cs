@@ -12,6 +12,7 @@ using Polls.Mvc.Models.Polls;
 namespace Polls.Mvc.Controllers
 {
     [Route("polls/")]
+    [Authorize]
     public class PollsController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -25,6 +26,7 @@ namespace Polls.Mvc.Controllers
 
 
         [Route("form/{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> DisplayForm([FromRoute]int id)
         {
             var request = new GetPoll { Id = id };
