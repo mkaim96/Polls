@@ -29,6 +29,11 @@ namespace Polls.Core.Domain
 
         public QuestionStatistics GenerateStatistics(List<Answer> answers)
         {
+            if (statsGenerator == null)
+            {
+                throw new NotImplementedException();
+            }
+
             return statsGenerator.Generate(this, answers);
         }
     }
