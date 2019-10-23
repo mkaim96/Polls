@@ -16,7 +16,7 @@ namespace Polls.Tests
         {
             // Arrange.
             var generator = new TextAnswerQuestionStatisticsGenerator();
-            var q = new SingleChoiceQuestion();
+            var q = new SingleChoiceQuestion(1, "Lorem ipsum", 1, new List<string> { "a", "b", "c"});
             var answers = new List<Answer>();
 
             // Act.
@@ -29,15 +29,7 @@ namespace Polls.Tests
             // Arrange.
             var generator = new TextAnswerQuestionStatisticsGenerator();
             var questionId = Guid.NewGuid().ToString();
-            var q = new TextAnswerQuestion
-            {
-                Id = questionId,
-                Number = 1,
-                PollId = 1,
-                QuestionText = "Lorem ipsum",
-                QuestionType = QuestionType.TextAnswer
-                
-            };
+            var q = new TextAnswerQuestion(1, "Lorem ipsum", 1);
 
             var answers = new List<Answer> 
             {
