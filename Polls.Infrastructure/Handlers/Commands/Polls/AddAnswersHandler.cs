@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MediatR;
+using Microsoft.Extensions.Primitives;
 using Polls.Core.Domain;
 using Polls.Infrastructure;
 using Polls.Infrastructure.Commands.Polls;
@@ -66,7 +67,7 @@ namespace Polls.Infrastructure.Handlers.Commands.Polls
                         if (request.Form.ContainsKey(q.Id.ToString()))
                         {
                             // Check if answer isnt empty
-                            if (String.IsNullOrEmpty(request.Form[q.Id.ToString()]))
+                            if (StringValues.IsNullOrEmpty(request.Form[q.Id.ToString()]))
                             {
                                 continue;
                             }
