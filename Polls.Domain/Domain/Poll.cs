@@ -28,20 +28,5 @@ namespace Polls.Core.Domain
         {
             Questions.AddRange(questions);
         }
-
-        public IEnumerable<T> GetConcreteQuestions<T>() where T : Question
-        {
-            var result = new List<T>();
-
-            foreach(var question in Questions)
-            {
-                if(question is T q)
-                {
-                    result.Add(q);
-                }
-            }
-
-            return result;
-        }
     }
 }
