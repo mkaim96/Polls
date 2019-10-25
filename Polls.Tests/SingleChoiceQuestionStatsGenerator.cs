@@ -25,7 +25,6 @@ namespace Polls.Tests
                 new SingleChoiceAnswer {Id = 2, Choice = "opcja 2", QuestionId = question.Id },
                 new SingleChoiceAnswer {Id = 3, Choice = "opcja 3", QuestionId = question.Id },
                 new SingleChoiceAnswer {Id = 4, Choice = "opcja 1", QuestionId = question.Id },
-
             };
         }
 
@@ -51,7 +50,6 @@ namespace Polls.Tests
             // Assert.
             var actual = stats.VotesCount;
             Assert.Equal(expected, actual);
-
         }
 
         [Theory]
@@ -66,8 +64,6 @@ namespace Polls.Tests
             // Assert.
             var actual = stats.ChoicesCount[choice];
             Assert.Equal(actual, votes);
-
-            
         }
     }
 }
