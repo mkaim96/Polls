@@ -6,7 +6,7 @@ using Polls.Core.Domain;
 
 namespace Polls.Core.Statistics.StatsGenerators
 {
-    class MultipleChoiceQuestionStatisticsGenerator : IStatisticsGenerator
+    public class MultipleChoiceQuestionStatisticsGenerator : IStatisticsGenerator
     {
         public QuestionStatistics Generate(Question q, List<Answer> answers)
         {
